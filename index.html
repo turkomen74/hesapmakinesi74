@@ -23,7 +23,7 @@
             background-color: #0a0a0a;
             border: 1px solid #1a1a1a;
             cursor: pointer;
-            transition: border-color 0.2s ease, transform 0.2s ease;
+            transition: border-color 0.2s ease;
         }
         .game-card:hover {
             border-color: #dc2626;
@@ -38,7 +38,9 @@
             align-items: center;
             justify-content: center;
             position: relative;
-            will-change: transform;
+            /* Donanım Hızlandırma - FPS için kritik */
+            transform: translateZ(0);
+            backface-visibility: hidden;
         }
 
         #game-frame {
@@ -46,17 +48,23 @@
             width: 100% !important;
             height: 100% !important;
             display: block;
-            transform: translateZ(0); /* GPU Hızlandırma ve FPS Optimizasyonu */
+            margin: 0;
+            padding: 0;
         }
 
+        /* Tam ekran modunda siyah barları yok et ve FPS'i koru */
         #game-container:fullscreen {
             width: 100vw !important;
             height: 100vh !important;
             background: #000;
+            padding: 0;
+            margin: 0;
         }
         #game-container:fullscreen #game-frame {
             width: 100vw !important;
             height: 100vh !important;
+            max-width: 100% !important;
+            max-height: 100% !important;
         }
 
         #game-container:-webkit-full-screen { width: 100vw; height: 100vh; }
@@ -161,7 +169,7 @@
                 </button>
             </div>
             <div id="game-container" class="rounded-sm overflow-hidden border border-zinc-900 shadow-2xl relative">
-                <iframe id="game-frame" src="" allow="fullscreen; autoplay; encrypted-media; picture-in-picture"></iframe>
+                <iframe id="game-frame" src="" allow="fullscreen; autoplay; encrypted-media; picture-in-picture; cross-origin-isolated"></iframe>
             </div>
         </section>
 
@@ -176,101 +184,101 @@
     <script>
         const GAMES_DB = [
             {
-                id: 'ates-ve-su-1',
-                title: 'Ateş Ve Su 1',
-                shortDesc: 'Efsanevi ikili ile ilk maceraya atılın.',
-                description: 'Ateş ve Su 1: Orman Tapınağı, işbirliğine dayalı bulmaca-platform oyunlarının atasıdır. Ateş çocuk ve Su kız karakterlerini kontrol ederek engelleri aşmalı, elmasları toplamalı ve her iki karakteri de güvenle çıkış kapısına ulaştırmalısınız. Dikkat: Ateş suya, su ise ateşe değmemeli!',
-                gameUrl: 'https://html5.gamedistribution.com/a55c9cc9c21e4fc683c8c6857f3d0c75/'
+                id: 'vice-city-sehri',
+                title: 'Vice City Şehri',
+                shortDesc: '80\'lerin neon ışıklı suç dünyası.',
+                description: 'Tommy Vercetti ile 80\'lerin Vice City atmosferine geri dönün. Bu klasik aksiyon oyununda şehri fethetmeye hazırlanın.',
+                gameUrl: 'https://learn.edumain.net/games/vice-city/index.html?fullscreen=0&sc=1'
             },
             {
-                id: 'ates-ve-su-3',
-                title: 'Ateş Ve Su 3',
-                shortDesc: 'Buz Tapınağı\'nda dondurucu bulmacalar!',
-                description: 'Serinin üçüncü oyununda kahramanlarımız Buz Tapınağı\'na konuk oluyor. Kaygan zeminler ve dondurucu sular arasında strateji geliştirmeniz gerekiyor. Ateş çocuk buz üstünde hızlı hareket ederken Su kız buzun üzerinde zorlanabilir. Koordinasyonunuzu konuşturun ve tüm bölümleri geçin.',
-                gameUrl: 'https://html5.gamedistribution.com/f3a6e1ac0a77412289cbac47658b2b68/'
+                id: 'happy-wheels',
+                title: 'Happy Wheels',
+                shortDesc: 'Fizik tabanlı kaos ve hayatta kalma!',
+                description: 'Happy Wheels, alışılmadık araçlarla engelli parkurları geçmeye çalıştığınız efsanevi bir fizik oyunudur. Her seviye farklı bir zorluk ve kara mizah unsurları barındırır. Karakterinizi parçalamadan bitiş çizgisine ulaştırabilecek misiniz?',
+                gameUrl: 'https://gameinclassroom.github.io/happy-wheels/'
+            },
+            {
+                id: 'scrap-metal-3',
+                title: 'Scrap Metal 3',
+                shortDesc: '3D Gerçekçi Araba Parçalama Simülasyonu.',
+                description: 'Detaylı hasar modellemesi ve özgür dünya sürüşü! Scrap Metal 3, tarayıcıda 3D fizik motorunu sonuna kadar kullanan bir yapımdır. Bu sürümde tam ekran optimizasyonu yapılarak FPS kayıpları minimize edilmiştir.',
+                gameUrl: 'https://edumathtools.com/player/?src=https%3A%2F%2Fgeet.in.net%2Fget%2Fscrap-metal%2Fgame.html'
             },
             {
                 id: 'vice-city-sehri',
                 title: 'Vice City Şehri',
-                shortDesc: '80\'lerin neon ışıklı suç dünyasına geri dönün.',
-                description: 'Grand Theft Auto: Vice City, oyuncuları 1986 yılının Vice City şehrine götürüyor. Tommy Vercetti\'nin hikayesini takip ettiğimiz bu efsane oyunda, şehrin yeraltı dünyasında yükselişe tanıklık ediyoruz. Muhteşem müzikler ve sınırsız aksiyon sizi bekliyor.',
+                shortDesc: '80\'lerin neon ışıklı suç dünyası.',
+                description: 'Tommy Vercetti ile 80\'lerin Vice City atmosferine geri dönün. Bu klasik aksiyon oyununda şehri fethetmeye hazırlanın.',
                 gameUrl: 'https://learn.edumain.net/games/vice-city/index.html?fullscreen=0&sc=1'
             },
             {
                 id: 'supheli-imposter',
                 title: 'ŞÜPHELİ İMPOSTER',
-                shortDesc: 'Mürettebatın içinde gizlenen haini bul veya hepsini ele!',
-                description: 'Among Us esintili bu oyunda, bir uzay gemisi veya istasyonunda görevleri tamamlamaya çalışan mürettebatın arasındasınız. Ancak dikkatli olun! Aranızda bir "Imposter" var. Strateji kurun, şüphelileri tartışın ve hayatta kalın.',
+                shortDesc: 'Mürettebatın içindeki haini bul!',
+                description: 'Among Us esintili bu oyunda, bir uzay gemisinde görevleri tamamlamaya çalışırken aranızdaki "Imposter"ı deşifre etmelisiniz.',
                 gameUrl: 'https://edumathtools.com/player?src=https%3A%2F%2Fgeet.in.net%2Fget%2Famong-us%2Fgame.html'
             },
             {
                 id: '2d-ac-kopek-baligi',
                 title: '2D AÇ KÖPEK BALIĞI',
                 shortDesc: 'Denizin en tehlikeli avcısı olun.',
-                description: 'Hungry Shark dünyasında olduğu gibi, devasa bir köpek balığını kontrol ediyorsunuz. Sürekli acıkan karnınızı doyurmak için balıkları, yüzücüleri ve hatta kuşları avlayın. Ne kadar çok yerseniz o kadar büyür ve puan kazanırsınız.',
+                description: 'Hungry Shark dünyasında olduğu gibi, devasa bir köpek balığını kontrol edin ve denizde ne bulursanız yiyerek büyüyün!',
                 gameUrl: 'https://edumathtools.com/player/?src=https%3A%2F%2Fgeet.in.net%2Fget%2Fangry-sharks%2Fgame.html'
             },
             {
                 id: 'stickman-hook',
                 title: 'STICKMAN HOOK',
                 shortDesc: 'Kancanla bir Spiderman gibi savrul!',
-                description: 'Stickman Hook, reflekslerinizi test eden eğlenceli bir 2D beceri oyunudur. Çöp adam karakterinizle kancaları kullanarak platformlar arasında akrobatik hareketler yapın. Fizik kurallarını lehinize kullanın ve bitiş çizgisine uçun!',
+                description: 'Örümcek adam mekanikleriyle donatılmış bu fizik oyununda, kancalarınızı kullanarak platformlar arasında akrobatik hareketler yapın.',
                 gameUrl: 'https://edumathtools.com/player?src=https%3A%2F%2Fgeet.in.net%2Fget%2Fstickman-hook%2Fgame.html'
             },
             {
                 id: 'world-hardest-game',
                 title: 'World Hardest Game',
-                shortDesc: 'Dünyanın en zor 2D oyunu. Sabrını test et!',
-                description: 'World\'s Hardest Game, sadeliğiyle bilinen ancak sinir katsayınızı zorlayacak efsanevi bir 2D beceri oyunudur. Amacınız, hareketli mavi engellere çarpmadan tüm sarı noktaları toplamaktır.',
+                shortDesc: 'Dünyanın en zor 2D oyunu.',
+                description: 'Mavi engellere çarpmadan tüm sarı noktaları toplayın. Sinir katsayınızı zorlayacak bir klasik.',
                 gameUrl: 'https://edumathtools.com/player/?src=https%3A%2F%2Fgeet.in.net%2Fget%2Fworlds-hardest-game%2Fgame.html'
             },
             {
                 id: 'race-survival',
                 title: 'RACE SURVIVAL ARENA KING',
-                shortDesc: '3D Aksiyon dolu araba savaş arenası!',
-                description: 'Race Survival Arena King, oyuncuları adrenalin dolu bir hayatta kalma mücadelesine davet ediyor. Rakiplerinizi platformdan dışarı itmeli ve son ayakta kalan araç olmalısınız.',
+                shortDesc: '3D Aksiyon dolu araba arenası!',
+                description: 'Rakiplerinizi platformdan dışarı itin ve son hayatta kalan araç olun.',
                 gameUrl: 'https://classroomlesson.github.io/basic-ruffle-player/html/race_survival_arena_king/index.html'
             },
             {
                 id: 'elastik-yuz',
                 title: 'ELASTİK YÜZ',
-                shortDesc: 'Eğlenceli ve esnek bir stres atma oyunu.',
-                description: 'Fizik tabanlı yapısıyla yüz hatlarını dilediğiniz gibi çekiştirip esnetebildiğiniz son derece eğlenceli bir stres atma simülasyonu.',
+                shortDesc: 'Eğlenceli stres atma simülasyonu.',
+                description: 'Fizik tabanlı yapısıyla yüz hatlarını dilediğiniz gibi esnetin.',
                 gameUrl: 'https://edumathtools.com/player/?src=https%3A%2F%2Fgeet.in.net%2Fget%2Felastic-face%2Fgame.html'
-            },
-            {
-                id: 'scrap-metal-3',
-                title: 'Scrap Metal 3',
-                shortDesc: '3D Gerçekçi Araba Parçalama Simülasyonu.',
-                description: 'Detaylı hasar modellemesi ile metalin sınırlarını zorlayın! Farklı araçlarla açık dünyada özgürce takılın.',
-                gameUrl: 'https://edumathtools.com/player/?src=https%3A%2F%2Fgeet.in.net%2Fget%2Fscrap-metal%2Fgame.html'
             },
             {
                 id: 'surfers-subway',
                 title: 'Surfers Subway',
-                shortDesc: 'Tren raylarında bitmek bilmeyen bir kovalamaca!',
-                description: 'Efsanevi sonsuz koşu oyunu. Engellerin üzerinden atla, trenlerin altından kay ve en yüksek puanı topla!',
+                shortDesc: 'Sonsuz koşu macerası!',
+                description: 'Metro raylarında engellerden kaçın ve en yüksek puanı yapın.',
                 gameUrl: 'https://edumathtools.com/player?src=https%3A%2F%2Fgeet.in.net%2Fget%2Fsubway-surfers-ny%2Fgame.html'
             },
             {
                 id: 'bloxorz',
                 title: 'BLOXORZ',
-                shortDesc: 'Zeka ve mantığın sınırlayan 3D blok oyunu.',
-                description: 'Bir bloğu delikten düşürmek için platform üzerinde yuvarladığınız efsanevi bir zeka oyunu.',
+                shortDesc: 'Zeka ve mantık oyunu.',
+                description: '3D bir bloğu delikten düşürmek için platform üzerinde yuvarlayın.',
                 gameUrl: 'https://edumathtools.com/player?src=https%3A%2F%2Fgeet.in.net%2Fget%2Fbloxors%2Fgame.html'
             },
             {
                 id: 'ninecraft',
                 title: 'NINECRAFT',
                 shortDesc: 'Minecraft 1.8.8 Tarayıcı Sürümü.',
-                description: 'Sonsuz blok dünyasında yapılar inşa edin, maden kazın ve hayatta kalmaya çalışın.',
+                description: 'Blok dünyasında hayatta kalın ve dilediğiniz yapıları inşa edin.',
                 gameUrl: 'https://play.rantey.com/'
             },
             {
                 id: 'yasli-babaanne',
                 title: 'Yaşlı Babaanne',
-                shortDesc: 'Granny: Evden kaçmak için 5 günün var.',
-                description: 'Babaanne sizi evine kilitledi. Sessiz olun ve bulmacaları çözerek evden kaçmaya çalışın.',
+                shortDesc: 'Granny: Evden kaçma mücadelesi.',
+                description: 'Babaannenin evinden kaçmak için sessiz olun ve bulmacaları çözün.',
                 gameUrl: 'https://db.mathify.top/html/granny/index.html'
             }
         ];
