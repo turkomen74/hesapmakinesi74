@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TURKOMEN GAMES</title>
+    <!-- Google Search Console Mülk Doğrulaması -->
+    <meta name="google-site-verification" content="arWRr6xel-AOzGOFiqQJxSbAfCYYLkQshrRLp8R7Qa4" />
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #000000;
+            color: #ffffff;
+            margin: 0;
+            overflow-x: hidden;
+        }
+        /* Modern dark cards without animations/glow */
+        .game-card {
+            background-color: #0a0a0a;
+            border: 1px solid #1a1a1a;
+            cursor: pointer;
+            transition: border-color 0.2s ease;
+        }
+        .game-card:hover {
+            border-color: #dc2626;
+        }
+        .hidden {
+            display: none;
+        }
+        iframe {
+            border: none;
+            width: 100%;
+            height: 85vh;
+            background: #000;
+        }
+        .btn-primary {
+            background-color: #dc2626;
+            color: #ffffff;
+            font-weight: 700;
+            padding: 14px 28px;
+            border-radius: 4px;
+            text-align: center;
+            display: inline-block;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+        .btn-secondary {
+            background-color: #1a1a1a;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-transform: uppercase;
+            border: 1px solid #333;
+        }
+        /* Eğer gerçek tam ekran izni yoksa bu sınıf kullanılacak */
+        .pseudo-fullscreen {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            z-index: 9999 !important;
+            background: black;
+        }
+        .pseudo-fullscreen iframe {
+            height: 100vh !important;
+        }
+    </style>
+</head>
+<body>
+
+    <nav class="border-b border-zinc-900 p-6 flex justify-between items-center bg-black sticky top-0 z-50">
+        <h1 class="text-2xl font-black tracking-tighter cursor-pointer uppercase italic" onclick="showView('home')">
+            TURKOMEN <span class="text-red-600">GAMES</span>
+        </h1>
+        <div class="space-x-8 text-[11px] font-bold tracking-[0.2em] text-zinc-500">
+            <a href="#" onclick="showView('home')" class="hover:text-white transition-none">ANA SAYFA</a>
+            <a href="#" class="hover:text-red-600 transition-none">İLETİŞİM</a>
+        </div>
+    </nav>
+
+    <main class="max-w-5xl mx-auto p-6 pt-12">
+        
+        <section id="view-home">
+            <h2 class="text-xs font-black mb-10 tracking-[0.3em] text-zinc-600 uppercase italic">Katalog / Oyun Seçiniz</h2>
+            <div id="game-list" class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <!-- Oyunlar JavaScript ile buraya eklenecek -->
+            </div>
+        </section>
+
+        <section id="view-detail" class="hidden">
+            <button onclick="showView('home')" class="mb-12 text-zinc-500 hover:text-white flex items-center text-[10px] font-bold uppercase tracking-widest transition-none">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                KATALOĞA DÖN
+            </button>
+            
+            <div class="max-w-4xl mx-auto">
+                <h2 id="detail-title" class="text-6xl md:text-8xl font-black mb-8 text-red-600 uppercase italic tracking-tighter leading-none"></h2>
+                <div class="h-1 w-24 bg-red-600 mb-12"></div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-12 items-start">
+                    <div class="md:col-span-2">
+                        <h3 class="text-zinc-600 text-xs font-black uppercase tracking-[0.2em] mb-4">Oyun Hakkında Bilgi</h3>
+                        <p id="detail-desc" class="text-zinc-300 text-lg leading-relaxed mb-10 font-medium"></p>
+                    </div>
+                    <div class="bg-zinc-950 p-6 border border-zinc-900">
+                         <h3 class="text-zinc-600 text-xs font-black uppercase tracking-[0.2em] mb-6">Kontrol Paneli</h3>
+                         <button id="play-btn" class="btn-primary w-full text-lg tracking-tight">ŞİMDİ OYNA</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="view-player" class="hidden">
+            <div class="flex justify-between items-center mb-6">
+                <div class="flex items-center gap-4">
+                    <h2 id="player-title" class="text-sm font-black text-red-600 uppercase italic tracking-widest"></h2>
+                    <span class="text-zinc-800">|</span>
+                    <button onclick="showView('detail')" class="text-[10px] font-bold text-zinc-500 hover:text-white uppercase tracking-widest">Oyun Sayfasına Dön</button>
+                </div>
+                <button id="fullscreen-btn" onclick="toggleFullscreen()" class="btn-secondary flex items-center">
+                    <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20"><path d="M3 4a1 1 0 011-1h4a1 1 0 010 2H5v3a1 1 0 01-2 0V4zm9 1a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-2 0V5h-3a1 1 0 01-1-1zm-9 9a1 1 0 011 1v3h3a1 1 0 010 2H4a1 1 0 01-1-1v-4a1 1 0 011-1zm13 1a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 010-2h3v-3a1 1 0 011-1z"></path></svg>
+                    TAM EKRAN
+                </button>
+            </div>
+            <div id="game-container" class="bg-black rounded-sm overflow-hidden border border-zinc-900 shadow-2xl relative">
+                <iframe id="game-frame" src="" allow="fullscreen; autoplay; encrypted-media; picture-in-picture"></iframe>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="mt-32 border-t border-zinc-950 p-12 text-center">
+        <p class="text-zinc-700 text-[10px] font-bold tracking-[0.5em] uppercase">
+            &copy; 2026 TURKOMEN GAMES. TÜM HAKLARI SAKLIDIR.
+        </p>
+    </footer>
+
+    <script>
+        const GAMES_DB = [
+            {
+                id: 'vice-city-sehri',
+                title: 'Vice City Şehri',
+                shortDesc: '80\'lerin neon ışıklı suç dünyasına geri dönün.',
+                description: 'Grand Theft Auto: Vice City, oyuncuları 1986 yılının Vice City (Miami tabanlı) şehrine götürüyor. Tommy Vercetti\'nin hikayesini takip ettiğimiz bu efsane oyunda, hapisten yeni çıkan bir suçlunun şehrin yeraltı dünyasında yükselişine tanıklık ediyoruz. Muhteşem müzikler, dönemin atmosferi ve sınırsız aksiyon sizi bekliyor. Şehir senin, kuralları sen koy!',
+                gameUrl: 'https://learn.edumain.net/games/vice-city/index.html?fullscreen=0&sc=1'
+            },
+            {
+                id: 'world-hardest-game',
+                title: 'World Hardest Game',
+                shortDesc: 'Dünyanın en zor 2D oyunu. Sabrını test et!',
+                description: 'World\'s Hardest Game, sadeliğiyle bilinen ancak sinir katsayınızı zorlayacak efsanevi bir 2D beceri oyunudur. Amacınız, hareketli mavi engellere çarpmadan bölümleri tamamlamak ve tüm sarı noktaları toplamaktır. Sabır, hız ve kusursuz zamanlama gerektirir. Dünyanın en zor oyunu unvanını gerçekten hak eden bu klasik yapım, reflekslerinizi sonuna kadar test edecek. Tek bir hata sizi başa döndürür!',
+                gameUrl: 'https://edumathtools.com/player/?src=https%3A%2F%2Fgeet.in.net%2Fget%2Fworlds-hardest-game%2Fgame.html'
+            },
+            {
+                id: 'scrap-metal-3',
+                title: 'Scrap Metal 3',
+                shortDesc: '3D Gerçekçi Araba Parçalama ve Sürüş Simülasyonu.',
+                description: 'Scrap Metal 3, tarayıcı tabanlı oyunlar arasında 3D fizik motoru ve özgür oynanışıyla öne çıkan devasa bir simülasyondur. Geniş bir haritada farklı türdeki araçları özgürce sürebilir, rampalar ve engeller inşa ederek araçların dayanıklılığını test edebilirsiniz. Oyunun en büyük özelliği, araçların aldığı detaylı hasardır; her çarpışma kaportada gerçekçi bozulmalara yol açar. Kendi parkurunuzu tasarlayın ve metalin sınırlarını zorlayın!',
+                gameUrl: 'https://edumathtools.com/player/?src=https%3A%2F%2Fgeet.in.net%2Fget%2Fscrap-metal%2Fgame.html'
+            },
+            {
+                id: 'surfers-subway',
+                title: 'Surfers Subway',
+                shortDesc: 'Tren raylarında bitmek bilmeyen bir kovalamaca!',
+                description: 'Subway Surfers, Jake, Tricky ve Fresh\'in huysuz Müfettiş ve köpeğinden kaçtığı efsanevi bir sonsuz koşu oyunudur. New York metro raylarında geçen bu macerada engellerin üzerinden atlamalı, trenlerin altından kaymalı ve en yüksek puanı toplamak için altınları toplamalısın. Hoverboardlar, jetpackler ve süper spor ayakkabılarla heyecanı doruğa çıkar. Trenlerden kaç, barikatların üstünden zıpla ve yakalanmadan ne kadar uzağa gidebileceğini kanıtla!',
+                gameUrl: 'https://edumathtools.com/player?src=https%3A%2F%2Fgeet.in.net%2Fget%2Fsubway-surfers-ny%2Fgame.html'
+            },
+            {
+                id: 'bloxorz',
+                title: 'BLOXORZ',
+                shortDesc: 'Zeka ve mantığın sınırlarını zorlayan 3D blok oyunu.',
+                description: 'Bloxorz, bir bloğu delikten düşürmek için platform üzerinde yuvarladığınız efsanevi bir zeka oyunudur. Her seviye daha karmaşık hale gelirken köprüler, anahtarlar ve kırılgan zeminler yolunuzu kesecek. Uzamsal düşünme yeteneğinizi test eden bu klasik, odaklanma ve strateji gerektirir. Bloğu dengede tutun ve nihai hedefe ulaştırın!',
+                gameUrl: 'https://edumathtools.com/player?src=https%3A%2F%2Fgeet.in.net%2Fget%2Fbloxors%2Fgame.html'
+            }
+        ];
+
+        let currentGameId = null;
+
+        function showView(viewName) {
+            document.getElementById('view-home').classList.add('hidden');
+            document.getElementById('view-detail').classList.add('hidden');
+            document.getElementById('view-player').classList.add('hidden');
+
+            document.getElementById('view-' + viewName).classList.remove('hidden');
+            
+            if (viewName !== 'player') {
+                document.getElementById('game-frame').src = '';
+                document.getElementById('game-container').classList.remove('pseudo-fullscreen');
+            }
+            window.scrollTo(0, 0);
+        }
+
+        function loadGameDetail(gameId) {
+            const game = GAMES_DB.find(g => g.id === gameId);
+            if (!game) return;
+
+            currentGameId = gameId;
+            document.getElementById('detail-title').innerText = game.title;
+            document.getElementById('detail-desc').innerText = game.description;
+            
+            document.getElementById('play-btn').onclick = () => {
+                loadGamePlayer(gameId);
+            };
+
+            showView('detail');
+        }
+
+        function loadGamePlayer(gameId) {
+            const game = GAMES_DB.find(g => g.id === gameId);
+            if (!game) return;
+
+            document.getElementById('player-title').innerText = game.title;
+            document.getElementById('game-frame').src = game.gameUrl;
+            showView('player');
+        }
+
+        async function toggleFullscreen() {
+            const elem = document.getElementById('game-container');
+            
+            try {
+                if (!document.fullscreenElement) {
+                    if (elem.requestFullscreen) {
+                        await elem.requestFullscreen();
+                    } else if (elem.webkitRequestFullscreen) {
+                        await elem.webkitRequestFullscreen();
+                    } else if (elem.msRequestFullscreen) {
+                        await elem.msRequestFullscreen();
+                    }
+                } else {
+                    if (document.exitFullscreen) {
+                        await document.exitFullscreen();
+                    }
+                }
+            } catch (err) {
+                console.warn("Tam ekran modu kısıtlaması, fallback kullanılıyor.");
+                elem.classList.toggle('pseudo-fullscreen');
+            }
+        }
+
+        function renderHome() {
+            const container = document.getElementById('game-list');
+            container.innerHTML = '';
+
+            GAMES_DB.forEach(game => {
+                const card = document.createElement('div');
+                card.className = 'game-card p-10 flex justify-between items-center';
+                card.onclick = () => loadGameDetail(game.id);
+                
+                card.innerHTML = `
+                    <div>
+                        <h3 class="font-black text-2xl mb-1 uppercase italic tracking-tight">${game.title}</h3>
+                        <p class="text-zinc-600 text-[10px] font-bold uppercase tracking-widest">${game.shortDesc}</p>
+                    </div>
+                    <div class="text-zinc-800">
+                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path></svg>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        window.onload = () => {
+            renderHome();
+        };
+    </script>
+</body>
+</html>
