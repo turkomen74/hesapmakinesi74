@@ -16,19 +16,20 @@
             color: #ffffff;
             margin: 0;
             overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
         }
+
         .game-card {
             background-color: #0a0a0a;
             border: 1px solid #1a1a1a;
             cursor: pointer;
-            transition: border-color 0.2s ease;
+            transition: border-color 0.2s ease, transform 0.2s ease;
         }
         .game-card:hover {
             border-color: #dc2626;
         }
-        .hidden {
-            display: none;
-        }
+        .hidden { display: none; }
+
         #game-container {
             width: 100%;
             height: 85vh;
@@ -36,22 +37,30 @@
             display: flex;
             align-items: center;
             justify-content: center;
+            position: relative;
+            will-change: transform;
         }
-        iframe {
+
+        #game-frame {
             border: none;
             width: 100% !important;
             height: 100% !important;
             display: block;
+            transform: translateZ(0); /* GPU Hızlandırma ve FPS Optimizasyonu */
         }
-        /* Gerçek Tam Ekran CSS Ayarı */
-        #game-container:fullscreen iframe {
+
+        #game-container:fullscreen {
+            width: 100vw !important;
+            height: 100vh !important;
+            background: #000;
+        }
+        #game-container:fullscreen #game-frame {
             width: 100vw !important;
             height: 100vh !important;
         }
-        #game-container:-webkit-full-screen iframe {
-            width: 100vw !important;
-            height: 100vh !important;
-        }
+
+        #game-container:-webkit-full-screen { width: 100vw; height: 100vh; }
+        #game-container:-webkit-full-screen #game-frame { width: 100vw; height: 100vh; }
 
         .btn-primary {
             background-color: #dc2626;
@@ -64,6 +73,7 @@
             cursor: pointer;
             text-transform: uppercase;
         }
+
         .btn-secondary {
             background-color: #1a1a1a;
             color: #fff;
@@ -75,19 +85,12 @@
             text-transform: uppercase;
             border: 1px solid #333;
         }
-        /* Fallback Tam Ekran Sınıfı */
-        .pseudo-fullscreen {
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            width: 100vw !important;
-            height: 100vh !important;
-            z-index: 9999 !important;
-            background: black;
+
+        .nav-icon {
+            transition: opacity 0.2s;
         }
-        .pseudo-fullscreen iframe {
-            width: 100vw !important;
-            height: 100vh !important;
+        .nav-icon:hover {
+            opacity: 0.8;
         }
     </style>
 </head>
@@ -97,10 +100,18 @@
         <h1 class="text-2xl font-black tracking-tighter cursor-pointer uppercase italic" onclick="showView('home')">
             TURKOMEN <span class="text-red-600">GAMES</span>
         </h1>
-        <div class="flex items-center space-x-8 text-[11px] font-bold tracking-[0.2em] text-zinc-500">
-            <!-- Dosya İkonu ve Turkomen Files Linki -->
-            <a href="https://turkomenfiles.lovable.app/" target="_blank" title="TURKOMEN FILES" class="hover:text-yellow-400 transition-none flex items-center">
-                <svg class="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20"><path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"></path></svg>
+        <div class="flex items-center space-x-6 text-[11px] font-bold tracking-[0.2em] text-zinc-500">
+            <!-- YouTube İkonu -->
+            <a href="https://www.youtube.com/@turkomen74" target="_blank" title="YOUTUBE" class="nav-icon text-red-600">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>
+            </a>
+            <!-- Discord İkonu -->
+            <a href="https://discord.com/invite/G5thucVR8Z" target="_blank" title="DISCORD" class="nav-icon text-blue-500">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 11.732 11.732 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
+            </a>
+            <!-- Files İkonu -->
+            <a href="https://turkomenfiles.lovable.app/" target="_blank" title="TURKOMEN FILES" class="nav-icon text-yellow-500">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"></path></svg>
             </a>
             <a href="#" onclick="showView('home')" class="hover:text-white transition-none">ANA SAYFA</a>
         </div>
@@ -165,11 +176,46 @@
     <script>
         const GAMES_DB = [
             {
+                id: 'ates-ve-su-1',
+                title: 'Ateş Ve Su 1',
+                shortDesc: 'Efsanevi ikili ile ilk maceraya atılın.',
+                description: 'Ateş ve Su 1: Orman Tapınağı, işbirliğine dayalı bulmaca-platform oyunlarının atasıdır. Ateş çocuk ve Su kız karakterlerini kontrol ederek engelleri aşmalı, elmasları toplamalı ve her iki karakteri de güvenle çıkış kapısına ulaştırmalısınız. Dikkat: Ateş suya, su ise ateşe değmemeli!',
+                gameUrl: 'https://html5.gamedistribution.com/a55c9cc9c21e4fc683c8c6857f3d0c75/'
+            },
+            {
+                id: 'ates-ve-su-3',
+                title: 'Ateş Ve Su 3',
+                shortDesc: 'Buz Tapınağı\'nda dondurucu bulmacalar!',
+                description: 'Serinin üçüncü oyununda kahramanlarımız Buz Tapınağı\'na konuk oluyor. Kaygan zeminler ve dondurucu sular arasında strateji geliştirmeniz gerekiyor. Ateş çocuk buz üstünde hızlı hareket ederken Su kız buzun üzerinde zorlanabilir. Koordinasyonunuzu konuşturun ve tüm bölümleri geçin.',
+                gameUrl: 'https://html5.gamedistribution.com/f3a6e1ac0a77412289cbac47658b2b68/'
+            },
+            {
                 id: 'vice-city-sehri',
                 title: 'Vice City Şehri',
                 shortDesc: '80\'lerin neon ışıklı suç dünyasına geri dönün.',
                 description: 'Grand Theft Auto: Vice City, oyuncuları 1986 yılının Vice City şehrine götürüyor. Tommy Vercetti\'nin hikayesini takip ettiğimiz bu efsane oyunda, şehrin yeraltı dünyasında yükselişe tanıklık ediyoruz. Muhteşem müzikler ve sınırsız aksiyon sizi bekliyor.',
                 gameUrl: 'https://learn.edumain.net/games/vice-city/index.html?fullscreen=0&sc=1'
+            },
+            {
+                id: 'supheli-imposter',
+                title: 'ŞÜPHELİ İMPOSTER',
+                shortDesc: 'Mürettebatın içinde gizlenen haini bul veya hepsini ele!',
+                description: 'Among Us esintili bu oyunda, bir uzay gemisi veya istasyonunda görevleri tamamlamaya çalışan mürettebatın arasındasınız. Ancak dikkatli olun! Aranızda bir "Imposter" var. Strateji kurun, şüphelileri tartışın ve hayatta kalın.',
+                gameUrl: 'https://edumathtools.com/player?src=https%3A%2F%2Fgeet.in.net%2Fget%2Famong-us%2Fgame.html'
+            },
+            {
+                id: '2d-ac-kopek-baligi',
+                title: '2D AÇ KÖPEK BALIĞI',
+                shortDesc: 'Denizin en tehlikeli avcısı olun.',
+                description: 'Hungry Shark dünyasında olduğu gibi, devasa bir köpek balığını kontrol ediyorsunuz. Sürekli acıkan karnınızı doyurmak için balıkları, yüzücüleri ve hatta kuşları avlayın. Ne kadar çok yerseniz o kadar büyür ve puan kazanırsınız.',
+                gameUrl: 'https://edumathtools.com/player/?src=https%3A%2F%2Fgeet.in.net%2Fget%2Fangry-sharks%2Fgame.html'
+            },
+            {
+                id: 'stickman-hook',
+                title: 'STICKMAN HOOK',
+                shortDesc: 'Kancanla bir Spiderman gibi savrul!',
+                description: 'Stickman Hook, reflekslerinizi test eden eğlenceli bir 2D beceri oyunudur. Çöp adam karakterinizle kancaları kullanarak platformlar arasında akrobatik hareketler yapın. Fizik kurallarını lehinize kullanın ve bitiş çizgisine uçun!',
+                gameUrl: 'https://edumathtools.com/player?src=https%3A%2F%2Fgeet.in.net%2Fget%2Fstickman-hook%2Fgame.html'
             },
             {
                 id: 'world-hardest-game',
@@ -182,49 +228,49 @@
                 id: 'race-survival',
                 title: 'RACE SURVIVAL ARENA KING',
                 shortDesc: '3D Aksiyon dolu araba savaş arenası!',
-                description: 'Race Survival Arena King, oyuncuları adrenalin dolu bir hayatta kalma mücadelesine davet ediyor. 3D grafiklerle donatılmış bu arenada, rakiplerinizi platformdan dışarı itmeli ve son ayakta kalan araç olmalısınız. Hızlı manevralar, sert çarpışmalar ve kaos dolu bir sürüş deneyimi sizi bekliyor. Arenanın kralı kim olacak?',
+                description: 'Race Survival Arena King, oyuncuları adrenalin dolu bir hayatta kalma mücadelesine davet ediyor. Rakiplerinizi platformdan dışarı itmeli ve son ayakta kalan araç olmalısınız.',
                 gameUrl: 'https://classroomlesson.github.io/basic-ruffle-player/html/race_survival_arena_king/index.html'
             },
             {
                 id: 'elastik-yuz',
                 title: 'ELASTİK YÜZ',
                 shortDesc: 'Eğlenceli ve esnek bir stres atma oyunu.',
-                description: 'Elastik Yüz (Elastic Face), fizik tabanlı yapısıyla yüz hatlarını dilediğiniz gibi çekiştirip esnetebildiğiniz son derece eğlenceli bir oyundur. Farenizi kullanarak ekrandaki karakterin yüzünü şekilden şekle sokun, komik ifadeler yaratın ve stres atın. Basit ama bağımlılık yapan bir fizik simülasyonu!',
+                description: 'Fizik tabanlı yapısıyla yüz hatlarını dilediğiniz gibi çekiştirip esnetebildiğiniz son derece eğlenceli bir stres atma simülasyonu.',
                 gameUrl: 'https://edumathtools.com/player/?src=https%3A%2F%2Fgeet.in.net%2Fget%2Felastic-face%2Fgame.html'
             },
             {
                 id: 'scrap-metal-3',
                 title: 'Scrap Metal 3',
                 shortDesc: '3D Gerçekçi Araba Parçalama Simülasyonu.',
-                description: 'Geniş bir haritada farklı türdeki araçları özgürce sürebilir, rampalar inşa ederek araçların dayanıklılığını test edebilirsiniz. Detaylı hasar modellemesi ile metalin sınırlarını zorlayın!',
+                description: 'Detaylı hasar modellemesi ile metalin sınırlarını zorlayın! Farklı araçlarla açık dünyada özgürce takılın.',
                 gameUrl: 'https://edumathtools.com/player/?src=https%3A%2F%2Fgeet.in.net%2Fget%2Fscrap-metal%2Fgame.html'
             },
             {
                 id: 'surfers-subway',
                 title: 'Surfers Subway',
                 shortDesc: 'Tren raylarında bitmek bilmeyen bir kovalamaca!',
-                description: 'Jake ve arkadaşlarının huysuz Müfettişten kaçtığı efsanevi sonsuz koşu oyunu. Engellerin üzerinden atla, trenlerin altından kay ve en yüksek puanı topla!',
+                description: 'Efsanevi sonsuz koşu oyunu. Engellerin üzerinden atla, trenlerin altından kay ve en yüksek puanı topla!',
                 gameUrl: 'https://edumathtools.com/player?src=https%3A%2F%2Fgeet.in.net%2Fget%2Fsubway-surfers-ny%2Fgame.html'
             },
             {
                 id: 'bloxorz',
                 title: 'BLOXORZ',
-                shortDesc: 'Zeka ve mantığın sınırlarını zorlayan 3D blok oyunu.',
-                description: 'Bir bloğu delikten düşürmek için platform üzerinde yuvarladığınız efsanevi bir zeka oyunu. Uzamsal düşünme yeteneğinizi test eden bu klasik, strateji gerektirir.',
+                shortDesc: 'Zeka ve mantığın sınırlayan 3D blok oyunu.',
+                description: 'Bir bloğu delikten düşürmek için platform üzerinde yuvarladığınız efsanevi bir zeka oyunu.',
                 gameUrl: 'https://edumathtools.com/player?src=https%3A%2F%2Fgeet.in.net%2Fget%2Fbloxors%2Fgame.html'
             },
             {
                 id: 'ninecraft',
                 title: 'NINECRAFT',
                 shortDesc: 'Minecraft 1.8.8 Tarayıcı Sürümü.',
-                description: 'Minecraft 1.8.8 tabanlı bu sürümde, hayal gücünüzü kullanarak sonsuz blok dünyasında yapılar inşa edebilir, maden kazabilir ve hayatta kalma mücadelesi verebilirsiniz. Tarayıcı üzerinden kesintisiz klasik Minecraft deneyimi!',
+                description: 'Sonsuz blok dünyasında yapılar inşa edin, maden kazın ve hayatta kalmaya çalışın.',
                 gameUrl: 'https://play.rantey.com/'
             },
             {
                 id: 'yasli-babaanne',
                 title: 'Yaşlı Babaanne',
                 shortDesc: 'Granny: Evden kaçmak için 5 günün var.',
-                description: 'Granny (Babaanne) sizi evine kilitledi. Evden kaçmak için sessiz olmalı ve bulmacaları çözmelisiniz. Babaanne her şeyi duyar; eğer bir şey düşürürseniz koşarak gelir. Karanlık ve gerilim dolu bu evden sağ çıkabilecek misiniz?',
+                description: 'Babaanne sizi evine kilitledi. Sessiz olun ve bulmacaları çözerek evden kaçmaya çalışın.',
                 gameUrl: 'https://db.mathify.top/html/granny/index.html'
             }
         ];
@@ -240,7 +286,7 @@
             
             if (viewName !== 'player') {
                 document.getElementById('game-frame').src = '';
-                document.getElementById('game-container').classList.remove('pseudo-fullscreen');
+                if (document.fullscreenElement) document.exitFullscreen();
             }
             window.scrollTo(0, 0);
         }
@@ -279,7 +325,7 @@
                     }
                 }
             } catch (err) {
-                elem.classList.toggle('pseudo-fullscreen');
+                console.warn("Tam ekran kısıtlaması.");
             }
         }
 
