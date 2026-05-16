@@ -17,7 +17,6 @@
             margin: 0;
             overflow-x: hidden;
         }
-        /* Modern dark cards without animations/glow */
         .game-card {
             background-color: #0a0a0a;
             border: 1px solid #1a1a1a;
@@ -30,12 +29,30 @@
         .hidden {
             display: none;
         }
-        iframe {
-            border: none;
+        #game-container {
             width: 100%;
             height: 85vh;
             background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
+        iframe {
+            border: none;
+            width: 100% !important;
+            height: 100% !important;
+            display: block;
+        }
+        /* Gerçek Tam Ekran CSS Ayarı */
+        #game-container:fullscreen iframe {
+            width: 100vw !important;
+            height: 100vh !important;
+        }
+        #game-container:-webkit-full-screen iframe {
+            width: 100vw !important;
+            height: 100vh !important;
+        }
+
         .btn-primary {
             background-color: #dc2626;
             color: #ffffff;
@@ -58,7 +75,7 @@
             text-transform: uppercase;
             border: 1px solid #333;
         }
-        /* Eğer gerçek tam ekran izni yoksa bu sınıf kullanılacak */
+        /* Fallback Tam Ekran Sınıfı */
         .pseudo-fullscreen {
             position: fixed !important;
             top: 0 !important;
@@ -69,6 +86,7 @@
             background: black;
         }
         .pseudo-fullscreen iframe {
+            width: 100vw !important;
             height: 100vh !important;
         }
     </style>
@@ -79,9 +97,12 @@
         <h1 class="text-2xl font-black tracking-tighter cursor-pointer uppercase italic" onclick="showView('home')">
             TURKOMEN <span class="text-red-600">GAMES</span>
         </h1>
-        <div class="space-x-8 text-[11px] font-bold tracking-[0.2em] text-zinc-500">
+        <div class="flex items-center space-x-8 text-[11px] font-bold tracking-[0.2em] text-zinc-500">
+            <!-- Dosya İkonu ve Turkomen Files Linki -->
+            <a href="https://turkomenfiles.lovable.app/" target="_blank" title="TURKOMEN FILES" class="hover:text-yellow-400 transition-none flex items-center">
+                <svg class="w-5 h-5 text-yellow-500" fill="currentColor" viewBox="0 0 20 20"><path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"></path></svg>
+            </a>
             <a href="#" onclick="showView('home')" class="hover:text-white transition-none">ANA SAYFA</a>
-            <a href="#" class="hover:text-red-600 transition-none">İLETİŞİM</a>
         </div>
     </nav>
 
@@ -90,7 +111,7 @@
         <section id="view-home">
             <h2 class="text-xs font-black mb-10 tracking-[0.3em] text-zinc-600 uppercase italic">Katalog / Oyun Seçiniz</h2>
             <div id="game-list" class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <!-- Oyunlar JavaScript ile buraya eklenecek -->
+                <!-- Oyunlar JS ile gelecek -->
             </div>
         </section>
 
@@ -128,7 +149,7 @@
                     TAM EKRAN
                 </button>
             </div>
-            <div id="game-container" class="bg-black rounded-sm overflow-hidden border border-zinc-900 shadow-2xl relative">
+            <div id="game-container" class="rounded-sm overflow-hidden border border-zinc-900 shadow-2xl relative">
                 <iframe id="game-frame" src="" allow="fullscreen; autoplay; encrypted-media; picture-in-picture"></iframe>
             </div>
         </section>
@@ -147,36 +168,64 @@
                 id: 'vice-city-sehri',
                 title: 'Vice City Şehri',
                 shortDesc: '80\'lerin neon ışıklı suç dünyasına geri dönün.',
-                description: 'Grand Theft Auto: Vice City, oyuncuları 1986 yılının Vice City (Miami tabanlı) şehrine götürüyor. Tommy Vercetti\'nin hikayesini takip ettiğimiz bu efsane oyunda, hapisten yeni çıkan bir suçlunun şehrin yeraltı dünyasında yükselişine tanıklık ediyoruz. Muhteşem müzikler, dönemin atmosferi ve sınırsız aksiyon sizi bekliyor. Şehir senin, kuralları sen koy!',
+                description: 'Grand Theft Auto: Vice City, oyuncuları 1986 yılının Vice City şehrine götürüyor. Tommy Vercetti\'nin hikayesini takip ettiğimiz bu efsane oyunda, şehrin yeraltı dünyasında yükselişe tanıklık ediyoruz. Muhteşem müzikler ve sınırsız aksiyon sizi bekliyor.',
                 gameUrl: 'https://learn.edumain.net/games/vice-city/index.html?fullscreen=0&sc=1'
             },
             {
                 id: 'world-hardest-game',
                 title: 'World Hardest Game',
                 shortDesc: 'Dünyanın en zor 2D oyunu. Sabrını test et!',
-                description: 'World\'s Hardest Game, sadeliğiyle bilinen ancak sinir katsayınızı zorlayacak efsanevi bir 2D beceri oyunudur. Amacınız, hareketli mavi engellere çarpmadan bölümleri tamamlamak ve tüm sarı noktaları toplamaktır. Sabır, hız ve kusursuz zamanlama gerektirir. Dünyanın en zor oyunu unvanını gerçekten hak eden bu klasik yapım, reflekslerinizi sonuna kadar test edecek. Tek bir hata sizi başa döndürür!',
+                description: 'World\'s Hardest Game, sadeliğiyle bilinen ancak sinir katsayınızı zorlayacak efsanevi bir 2D beceri oyunudur. Amacınız, hareketli mavi engellere çarpmadan tüm sarı noktaları toplamaktır.',
                 gameUrl: 'https://edumathtools.com/player/?src=https%3A%2F%2Fgeet.in.net%2Fget%2Fworlds-hardest-game%2Fgame.html'
+            },
+            {
+                id: 'race-survival',
+                title: 'RACE SURVIVAL ARENA KING',
+                shortDesc: '3D Aksiyon dolu araba savaş arenası!',
+                description: 'Race Survival Arena King, oyuncuları adrenalin dolu bir hayatta kalma mücadelesine davet ediyor. 3D grafiklerle donatılmış bu arenada, rakiplerinizi platformdan dışarı itmeli ve son ayakta kalan araç olmalısınız. Hızlı manevralar, sert çarpışmalar ve kaos dolu bir sürüş deneyimi sizi bekliyor. Arenanın kralı kim olacak?',
+                gameUrl: 'https://classroomlesson.github.io/basic-ruffle-player/html/race_survival_arena_king/index.html'
+            },
+            {
+                id: 'elastik-yuz',
+                title: 'ELASTİK YÜZ',
+                shortDesc: 'Eğlenceli ve esnek bir stres atma oyunu.',
+                description: 'Elastik Yüz (Elastic Face), fizik tabanlı yapısıyla yüz hatlarını dilediğiniz gibi çekiştirip esnetebildiğiniz son derece eğlenceli bir oyundur. Farenizi kullanarak ekrandaki karakterin yüzünü şekilden şekle sokun, komik ifadeler yaratın ve stres atın. Basit ama bağımlılık yapan bir fizik simülasyonu!',
+                gameUrl: 'https://edumathtools.com/player/?src=https%3A%2F%2Fgeet.in.net%2Fget%2Felastic-face%2Fgame.html'
             },
             {
                 id: 'scrap-metal-3',
                 title: 'Scrap Metal 3',
-                shortDesc: '3D Gerçekçi Araba Parçalama ve Sürüş Simülasyonu.',
-                description: 'Scrap Metal 3, tarayıcı tabanlı oyunlar arasında 3D fizik motoru ve özgür oynanışıyla öne çıkan devasa bir simülasyondur. Geniş bir haritada farklı türdeki araçları özgürce sürebilir, rampalar ve engeller inşa ederek araçların dayanıklılığını test edebilirsiniz. Oyunun en büyük özelliği, araçların aldığı detaylı hasardır; her çarpışma kaportada gerçekçi bozulmalara yol açar. Kendi parkurunuzu tasarlayın ve metalin sınırlarını zorlayın!',
+                shortDesc: '3D Gerçekçi Araba Parçalama Simülasyonu.',
+                description: 'Geniş bir haritada farklı türdeki araçları özgürce sürebilir, rampalar inşa ederek araçların dayanıklılığını test edebilirsiniz. Detaylı hasar modellemesi ile metalin sınırlarını zorlayın!',
                 gameUrl: 'https://edumathtools.com/player/?src=https%3A%2F%2Fgeet.in.net%2Fget%2Fscrap-metal%2Fgame.html'
             },
             {
                 id: 'surfers-subway',
                 title: 'Surfers Subway',
                 shortDesc: 'Tren raylarında bitmek bilmeyen bir kovalamaca!',
-                description: 'Subway Surfers, Jake, Tricky ve Fresh\'in huysuz Müfettiş ve köpeğinden kaçtığı efsanevi bir sonsuz koşu oyunudur. New York metro raylarında geçen bu macerada engellerin üzerinden atlamalı, trenlerin altından kaymalı ve en yüksek puanı toplamak için altınları toplamalısın. Hoverboardlar, jetpackler ve süper spor ayakkabılarla heyecanı doruğa çıkar. Trenlerden kaç, barikatların üstünden zıpla ve yakalanmadan ne kadar uzağa gidebileceğini kanıtla!',
+                description: 'Jake ve arkadaşlarının huysuz Müfettişten kaçtığı efsanevi sonsuz koşu oyunu. Engellerin üzerinden atla, trenlerin altından kay ve en yüksek puanı topla!',
                 gameUrl: 'https://edumathtools.com/player?src=https%3A%2F%2Fgeet.in.net%2Fget%2Fsubway-surfers-ny%2Fgame.html'
             },
             {
                 id: 'bloxorz',
                 title: 'BLOXORZ',
                 shortDesc: 'Zeka ve mantığın sınırlarını zorlayan 3D blok oyunu.',
-                description: 'Bloxorz, bir bloğu delikten düşürmek için platform üzerinde yuvarladığınız efsanevi bir zeka oyunudur. Her seviye daha karmaşık hale gelirken köprüler, anahtarlar ve kırılgan zeminler yolunuzu kesecek. Uzamsal düşünme yeteneğinizi test eden bu klasik, odaklanma ve strateji gerektirir. Bloğu dengede tutun ve nihai hedefe ulaştırın!',
+                description: 'Bir bloğu delikten düşürmek için platform üzerinde yuvarladığınız efsanevi bir zeka oyunu. Uzamsal düşünme yeteneğinizi test eden bu klasik, strateji gerektirir.',
                 gameUrl: 'https://edumathtools.com/player?src=https%3A%2F%2Fgeet.in.net%2Fget%2Fbloxors%2Fgame.html'
+            },
+            {
+                id: 'ninecraft',
+                title: 'NINECRAFT',
+                shortDesc: 'Minecraft 1.8.8 Tarayıcı Sürümü.',
+                description: 'Minecraft 1.8.8 tabanlı bu sürümde, hayal gücünüzü kullanarak sonsuz blok dünyasında yapılar inşa edebilir, maden kazabilir ve hayatta kalma mücadelesi verebilirsiniz. Tarayıcı üzerinden kesintisiz klasik Minecraft deneyimi!',
+                gameUrl: 'https://play.rantey.com/'
+            },
+            {
+                id: 'yasli-babaanne',
+                title: 'Yaşlı Babaanne',
+                shortDesc: 'Granny: Evden kaçmak için 5 günün var.',
+                description: 'Granny (Babaanne) sizi evine kilitledi. Evden kaçmak için sessiz olmalı ve bulmacaları çözmelisiniz. Babaanne her şeyi duyar; eğer bir şey düşürürseniz koşarak gelir. Karanlık ve gerilim dolu bu evden sağ çıkabilecek misiniz?',
+                gameUrl: 'https://db.mathify.top/html/granny/index.html'
             }
         ];
 
@@ -199,22 +248,16 @@
         function loadGameDetail(gameId) {
             const game = GAMES_DB.find(g => g.id === gameId);
             if (!game) return;
-
             currentGameId = gameId;
             document.getElementById('detail-title').innerText = game.title;
             document.getElementById('detail-desc').innerText = game.description;
-            
-            document.getElementById('play-btn').onclick = () => {
-                loadGamePlayer(gameId);
-            };
-
+            document.getElementById('play-btn').onclick = () => loadGamePlayer(gameId);
             showView('detail');
         }
 
         function loadGamePlayer(gameId) {
             const game = GAMES_DB.find(g => g.id === gameId);
             if (!game) return;
-
             document.getElementById('player-title').innerText = game.title;
             document.getElementById('game-frame').src = game.gameUrl;
             showView('player');
@@ -229,8 +272,6 @@
                         await elem.requestFullscreen();
                     } else if (elem.webkitRequestFullscreen) {
                         await elem.webkitRequestFullscreen();
-                    } else if (elem.msRequestFullscreen) {
-                        await elem.msRequestFullscreen();
                     }
                 } else {
                     if (document.exitFullscreen) {
@@ -238,7 +279,6 @@
                     }
                 }
             } catch (err) {
-                console.warn("Tam ekran modu kısıtlaması, fallback kullanılıyor.");
                 elem.classList.toggle('pseudo-fullscreen');
             }
         }
@@ -246,12 +286,10 @@
         function renderHome() {
             const container = document.getElementById('game-list');
             container.innerHTML = '';
-
             GAMES_DB.forEach(game => {
                 const card = document.createElement('div');
                 card.className = 'game-card p-10 flex justify-between items-center';
                 card.onclick = () => loadGameDetail(game.id);
-                
                 card.innerHTML = `
                     <div>
                         <h3 class="font-black text-2xl mb-1 uppercase italic tracking-tight">${game.title}</h3>
@@ -265,9 +303,7 @@
             });
         }
 
-        window.onload = () => {
-            renderHome();
-        };
+        window.onload = renderHome;
     </script>
 </body>
 </html>
