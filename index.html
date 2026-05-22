@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TURKOMEN GAMES</title>
+    <title>Ücretsiz Hesap Makinesi - Çevrimiçi Hızlı Matematiksel İşlemler</title>
     <!-- Google Search Console Mülk Doğrulaması -->
     <meta name="google-site-verification" content="arWRr6xel-AOzGOFiqQJxSbAfCYYLkQshrRLp8R7Qa4" />
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -17,6 +18,13 @@
             margin: 0;
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        /* Light Theme Styles (For camouflage edu page) */
+        body.light-theme {
+            background-color: #f8fafc;
+            color: #0f172a;
         }
 
         .game-card {
@@ -28,7 +36,7 @@
         .game-card:hover {
             border-color: #dc2626;
         }
-        .hidden { display: none; }
+        .hidden { display: none !important; }
 
         #game-container {
             width: 100%;
@@ -38,9 +46,9 @@
             align-items: center;
             justify-content: center;
             position: relative;
-            /* Donanım Hızlandırma - FPS için kritik */
             transform: translateZ(0);
             backface-visibility: hidden;
+            will-change: transform;
         }
 
         #game-frame {
@@ -52,23 +60,31 @@
             padding: 0;
         }
 
-        /* Tam ekran modunda siyah barları yok et ve FPS'i koru */
-        #game-container:fullscreen {
+        /* Fullscreen handling to eliminate bars and sustain high FPS */
+        #game-container:fullscreen,
+        #game-container:-webkit-full-screen,
+        #game-container.pseudo-fullscreen {
             width: 100vw !important;
             height: 100vh !important;
-            background: #000;
-            padding: 0;
-            margin: 0;
+            max-width: 100% !important;
+            max-height: 100% !important;
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            z-index: 999999 !important;
+            background: #000000 !important;
+            padding: 0 !important;
+            margin: 0 !important;
         }
-        #game-container:fullscreen #game-frame {
+
+        #game-container:fullscreen #game-frame,
+        #game-container:-webkit-full-screen #game-frame,
+        #game-container.pseudo-fullscreen #game-frame {
             width: 100vw !important;
             height: 100vh !important;
             max-width: 100% !important;
             max-height: 100% !important;
         }
-
-        #game-container:-webkit-full-screen { width: 100vw; height: 100vh; }
-        #game-container:-webkit-full-screen #game-frame { width: 100vw; height: 100vh; }
 
         .btn-primary {
             background-color: #dc2626;
@@ -100,13 +116,50 @@
         .nav-icon:hover {
             opacity: 0.8;
         }
+
+        /* Camouflage Light Calculator Buttons */
+        .calc-btn {
+            background-color: #f1f5f9;
+            border: 1px solid #e2e8f0;
+            color: #1e293b;
+            font-size: 1.25rem;
+            font-weight: 600;
+            transition: all 0.1s ease;
+        }
+        .calc-btn:hover {
+            background-color: #e2e8f0;
+            border-color: #cbd5e1;
+        }
+        .calc-btn-op {
+            background-color: #f8fafc;
+            color: #2563eb;
+        }
+        .calc-btn-op:hover {
+            background-color: #2563eb;
+            color: #ffffff;
+        }
     </style>
 </head>
-<body>
+<body class="light-theme">
 
-    <nav class="border-b border-zinc-900 p-6 flex justify-between items-center bg-black sticky top-0 z-50">
-        <h1 class="text-2xl font-black tracking-tighter cursor-pointer uppercase italic" onclick="showView('home')">
-            TURKOMEN <span class="text-red-600">GAMES</span>
+    <!-- DERS WEB SİTESİ NAVİGASYON BARI (AÇIK TEMA) -->
+    <nav id="edu-nav" class="border-b border-slate-200 p-6 flex justify-between items-center bg-white sticky top-0 z-50 shadow-sm">
+        <h1 class="text-xl font-extrabold tracking-tight text-slate-900 flex items-center gap-2">
+            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+            MATEMATİK <span class="text-blue-600 font-light">ATÖLYESİ</span>
+        </h1>
+        <div class="hidden md:flex items-center space-x-6 text-xs font-semibold tracking-wider text-slate-500 uppercase">
+            <span class="text-blue-600 border-b-2 border-blue-600 pb-1">Hızlı Hesaplama</span>
+            <span class="hover:text-slate-800 cursor-pointer">Ders Notları</span>
+            <span class="hover:text-slate-800 cursor-pointer">Trigonometri</span>
+            <span class="hover:text-slate-800 cursor-pointer">Formül Kütüphanesi</span>
+        </div>
+    </nav>
+
+    <!-- GİZLİ OYUN PORTALİ NAVİGASYON BARI (SİYAH TEMA) -->
+    <nav id="game-nav" class="border-b border-zinc-900 p-6 flex justify-between items-center bg-black sticky top-0 z-50 hidden">
+        <h1 class="text-2xl font-black tracking-tighter cursor-pointer uppercase italic" onclick="showCalculator()">
+            HESAP <span class="text-red-600">MAKİNESİ</span>
         </h1>
         <div class="flex items-center space-x-6 text-[11px] font-bold tracking-[0.2em] text-zinc-500">
             <!-- YouTube İkonu -->
@@ -121,19 +174,93 @@
             <a href="https://turkomenfiles.lovable.app/" target="_blank" title="TURKOMEN FILES" class="nav-icon text-yellow-500">
                 <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"></path></svg>
             </a>
-            <a href="#" onclick="showView('home')" class="hover:text-white transition-none">ANA SAYFA</a>
+            <a href="#" onclick="showView('home')" class="hover:text-white transition-none text-red-600">OYUN PORTALİ</a>
         </div>
     </nav>
 
     <main class="max-w-5xl mx-auto p-6 pt-12">
         
-        <section id="view-home">
-            <h2 class="text-xs font-black mb-10 tracking-[0.3em] text-zinc-600 uppercase italic">Katalog / Oyun Seçiniz</h2>
-            <div id="game-list" class="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                <!-- Oyunlar JS ile gelecek -->
+        <!-- KAMUFLAJ DERS VE HESAP MAKİNESİ GÖRÜNÜMÜ -->
+        <section id="view-calc" class="grid grid-cols-1 md:grid-cols-3 gap-8 items-start min-h-[70vh]">
+            
+            <!-- Sol Panel: Akademik Formüller / Notlar (Kamuflaj için elzem) -->
+            <div class="md:col-span-2 space-y-6">
+                <div class="bg-white p-6 rounded-lg border border-slate-200 shadow-sm">
+                    <span class="text-xs font-bold text-blue-600 tracking-wider uppercase">Ders Kaynakları</span>
+                    <h2 class="text-2xl font-black text-slate-900 mt-2 mb-4">Temel Matematiksel Formüller</h2>
+                    <p class="text-slate-500 text-sm leading-relaxed mb-6">Matematik Atölyesi, öğrencilerin ve öğretmenlerin hızlı hesaplamalar yapabilmesi ve müfredattaki temel konuları gözden geçirmesi için oluşturulmuş akademik bir yardımcıdır.</p>
+                    
+                    <div class="space-y-4">
+                        <div class="p-4 bg-slate-50 rounded border border-slate-100 flex justify-between items-center">
+                            <div>
+                                <h4 class="font-bold text-slate-800 text-sm">İkinci Dereceden Denklemler</h4>
+                                <p class="text-xs text-slate-400 font-mono mt-1">ax² + bx + c = 0</p>
+                            </div>
+                            <span class="text-xs font-semibold font-mono text-slate-500 bg-white px-2 py-1 rounded shadow-sm border border-slate-100">x = (-b ± √Δ) / 2a</span>
+                        </div>
+                        <div class="p-4 bg-slate-50 rounded border border-slate-100 flex justify-between items-center">
+                            <div>
+                                <h4 class="font-bold text-slate-800 text-sm">Trigonometrik Özdeşlikler</h4>
+                                <p class="text-xs text-slate-400 font-mono mt-1">Pisagor Teoremi Karşılığı</p>
+                            </div>
+                            <span class="text-xs font-semibold font-mono text-slate-500 bg-white px-2 py-1 rounded shadow-sm border border-slate-100">sin²(x) + cos²(x) = 1</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-6 rounded-lg border border-slate-200 shadow-sm">
+                    <h3 class="text-sm font-bold text-slate-800 mb-3">Sınavlara Hazırlık Hatırlatması</h3>
+                    <ul class="text-xs text-slate-500 space-y-2 list-disc list-inside">
+                        <li>Günde en az 40 paragraf sorusu çözmeyi unutmayın.</li>
+                        <li>Geometri formüllerini her gün düzenli tekrar edin.</li>
+                        <li>Deneme analizlerinizi yaparken yanlış yaptığınız soruların çözümlerini mutlaka öğrenin.</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Sağ Panel: Son Derece Modern Açık Tema Hesap Makinesi -->
+            <div class="bg-white border border-slate-200 rounded-lg p-6 shadow-md">
+                <div class="mb-4">
+                    <p class="text-[10px] font-bold text-slate-400 tracking-widest uppercase mb-1">Hesaplama Ekranı</p>
+                    <input type="text" id="calc-display" readonly class="w-full bg-slate-50 border border-slate-200 text-right text-3xl font-mono p-4 text-slate-800 rounded focus:outline-none focus:border-blue-600 tracking-wide" placeholder="0">
+                </div>
+                <div class="grid grid-cols-4 gap-2">
+                    <button onclick="clearCalc()" class="calc-btn p-4 rounded col-span-2 text-red-600 hover:bg-red-50 hover:border-red-100">C</button>
+                    <button onclick="backspaceCalc()" class="calc-btn p-4 rounded">⌫</button>
+                    <button onclick="inputCalc('/')" class="calc-btn calc-btn-op p-4 rounded">/</button>
+
+                    <button onclick="inputCalc('7')" class="calc-btn p-4 rounded">7</button>
+                    <button onclick="inputCalc('8')" class="calc-btn p-4 rounded">8</button>
+                    <button onclick="inputCalc('9')" class="calc-btn p-4 rounded">9</button>
+                    <button onclick="inputCalc('*')" class="calc-btn calc-btn-op p-4 rounded">*</button>
+
+                    <button onclick="inputCalc('4')" class="calc-btn p-4 rounded">4</button>
+                    <button onclick="inputCalc('5')" class="calc-btn p-4 rounded">5</button>
+                    <button onclick="inputCalc('6')" class="calc-btn p-4 rounded">6</button>
+                    <button onclick="inputCalc('-')" class="calc-btn calc-btn-op p-4 rounded">-</button>
+
+                    <button onclick="inputCalc('1')" class="calc-btn p-4 rounded">1</button>
+                    <button onclick="inputCalc('2')" class="calc-btn p-4 rounded">2</button>
+                    <button onclick="inputCalc('3')" class="calc-btn p-4 rounded">3</button>
+                    <button onclick="inputCalc('+')" class="calc-btn calc-btn-op p-4 rounded">+</button>
+
+                    <button onclick="inputCalc('0')" class="calc-btn p-4 rounded col-span-2">0</button>
+                    <button onclick="inputCalc('.')" class="calc-btn p-4 rounded">.</button>
+                    <button onclick="evaluateCalc()" class="calc-btn calc-btn-op p-4 rounded bg-blue-600 text-white hover:bg-blue-700 hover:border-blue-700">=</button>
+                </div>
+                <p class="text-slate-400 text-[10px] font-bold text-center mt-6 uppercase tracking-wider">Hızlı ve Sınırsız Tarayıcı Hesaplama Modülü</p>
             </div>
         </section>
 
+        <!-- GİZLİ OYUN MENÜSÜ -->
+        <section id="view-home" class="hidden">
+            <h2 class="text-xs font-black mb-10 tracking-[0.3em] text-zinc-600 uppercase italic">Katalog / Oyun Seçiniz</h2>
+            <div id="game-list" class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <!-- Oyunlar JavaScript ile dinamik yerleştirilecek -->
+            </div>
+        </section>
+
+        <!-- OYUN DETAY SAYFASI -->
         <section id="view-detail" class="hidden">
             <button onclick="showView('home')" class="mb-12 text-zinc-500 hover:text-white flex items-center text-[10px] font-bold uppercase tracking-widest transition-none">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
@@ -156,6 +283,7 @@
             </div>
         </section>
 
+        <!-- OYUN OYNAMA EKRANI (OPTIMIZED IFRAME) -->
         <section id="view-player" class="hidden">
             <div class="flex justify-between items-center mb-6">
                 <div class="flex items-center gap-4">
@@ -175,9 +303,17 @@
 
     </main>
 
-    <footer class="mt-32 border-t border-zinc-950 p-12 text-center">
+    <!-- DERS WEB SİTESİ FOOTER -->
+    <footer id="footer-edu" class="mt-32 border-t border-slate-200 p-12 text-center bg-white">
+        <p class="text-slate-400 text-[10px] font-bold tracking-[0.3em] uppercase">
+            &copy; 2026 Matematik Atölyesi Portal. Tüm Hakları Saklıdır.
+        </p>
+    </footer>
+
+    <!-- OYUN PORTALI FOOTER -->
+    <footer id="footer-games" class="mt-32 border-t border-zinc-950 p-12 text-center hidden">
         <p class="text-zinc-700 text-[10px] font-bold tracking-[0.5em] uppercase">
-            &copy; 2026 TURKOMEN GAMES. TÜM HAKLARI SAKLIDIR.
+            &copy; 2026 Ücretsiz Hesap Makinesi. TÜM HAKLARI SAKLIDIR.
         </p>
     </footer>
 
@@ -277,8 +413,95 @@
         ];
 
         let currentGameId = null;
+        let gamesUnlocked = false;
+
+        // HESAP MAKİNESİ FONKSİYONLARI VE GİZLİ GEÇİT KONTROLÜ
+        function inputCalc(value) {
+            const display = document.getElementById('calc-display');
+            display.value += value;
+            checkSecretTrigger();
+        }
+
+        function clearCalc() {
+            document.getElementById('calc-display').value = '';
+        }
+
+        function backspaceCalc() {
+            const display = document.getElementById('calc-display');
+            display.value = display.value.slice(0, -1);
+        }
+
+        function evaluateCalc() {
+            const display = document.getElementById('calc-display');
+            try {
+                if (display.value.trim() !== '') {
+                    display.value = eval(display.value);
+                }
+            } catch (err) {
+                display.value = 'Hata';
+            }
+            checkSecretTrigger();
+        }
+
+        // Sadece tam olarak "747431" yazıldığında tetiklenir
+        function checkSecretTrigger() {
+            const displayValue = document.getElementById('calc-display').value;
+            if (displayValue === '747431') {
+                unlockGames();
+            }
+        }
+
+        function unlockGames() {
+            gamesUnlocked = true;
+            
+            // Themes and Nav bar transitions
+            document.body.classList.remove('light-theme');
+            document.getElementById('edu-nav').classList.add('hidden');
+            document.getElementById('footer-edu').classList.add('hidden');
+
+            document.getElementById('game-nav').classList.remove('hidden');
+            document.getElementById('footer-games').classList.remove('hidden');
+
+            showView('home');
+        }
+
+        function showCalculator() {
+            // Revert back to Camouflage Edu mode
+            gamesUnlocked = false;
+            document.body.classList.add('light-theme');
+            
+            document.getElementById('edu-nav').classList.remove('hidden');
+            document.getElementById('footer-edu').classList.remove('hidden');
+
+            document.getElementById('game-nav').classList.add('hidden');
+            document.getElementById('footer-games').classList.add('hidden');
+
+            document.getElementById('view-calc').classList.remove('hidden');
+            document.getElementById('view-home').classList.add('hidden');
+            document.getElementById('view-detail').classList.add('hidden');
+            document.getElementById('view-player').classList.add('hidden');
+            
+            document.getElementById('game-frame').src = '';
+            if (document.fullscreenElement) document.exitFullscreen();
+            
+            // Reset display
+            clearCalc();
+            window.scrollTo(0, 0);
+        }
 
         function showView(viewName) {
+            if (viewName === 'calc') {
+                showCalculator();
+                return;
+            }
+
+            // If games are not yet unlocked, prevent escaping the educational page
+            if (!gamesUnlocked && viewName !== 'calc') {
+                showCalculator();
+                return;
+            }
+
+            document.getElementById('view-calc').classList.add('hidden');
             document.getElementById('view-home').classList.add('hidden');
             document.getElementById('view-detail').classList.add('hidden');
             document.getElementById('view-player').classList.add('hidden');
@@ -287,6 +510,8 @@
             
             if (viewName !== 'player') {
                 document.getElementById('game-frame').src = '';
+                // Ensure pseudo fullscreen class is completely clean on navigation
+                document.getElementById('game-container').classList.remove('pseudo-fullscreen');
                 if (document.fullscreenElement) document.exitFullscreen();
             }
             window.scrollTo(0, 0);
@@ -311,22 +536,30 @@
         }
 
         async function toggleFullscreen() {
-            const elem = document.getElementById('game-container');
+            const container = document.getElementById('game-container');
             
             try {
-                if (!document.fullscreenElement) {
-                    if (elem.requestFullscreen) {
-                        await elem.requestFullscreen();
-                    } else if (elem.webkitRequestFullscreen) {
-                        await elem.webkitRequestFullscreen();
+                if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+                    // Standard and fallback requests
+                    if (container.requestFullscreen) {
+                        await container.requestFullscreen();
+                    } else if (container.webkitRequestFullscreen) {
+                        await container.webkitRequestFullscreen();
+                    } else {
+                        // Fallback pseudo-fullscreen when strict permissions trigger
+                        container.classList.add('pseudo-fullscreen');
                     }
                 } else {
                     if (document.exitFullscreen) {
                         await document.exitFullscreen();
+                    } else if (document.webkitExitFullscreen) {
+                        await document.webkitExitFullscreen();
                     }
+                    container.classList.remove('pseudo-fullscreen');
                 }
             } catch (err) {
-                console.warn("Tam ekran kısıtlaması.");
+                console.warn("Full screen API fallback initialized.");
+                container.classList.toggle('pseudo-fullscreen');
             }
         }
 
@@ -337,9 +570,10 @@
                 const card = document.createElement('div');
                 card.className = 'game-card p-10 flex justify-between items-center';
                 card.onclick = () => loadGameDetail(game.id);
+                
                 card.innerHTML = `
                     <div>
-                        <h3 class="font-black text-2xl mb-1 uppercase italic tracking-tight">${game.title}</h3>
+                        <h3 class="font-black text-2xl mb-1 uppercase italic tracking-tight text-white">${game.title}</h3>
                         <p class="text-zinc-600 text-[10px] font-bold uppercase tracking-widest">${game.shortDesc}</p>
                     </div>
                     <div class="text-zinc-800">
@@ -350,7 +584,35 @@
             });
         }
 
-        window.onload = renderHome;
+        window.onload = function() {
+            renderHome();
+            // Keyboard event support with secure key handling for the calculator view
+            document.addEventListener('keydown', function(event) {
+                const activeView = document.getElementById('view-calc').classList.contains('hidden') ? 'other' : 'calc';
+                if (activeView === 'calc') {
+                    if (event.key >= '0' && event.key <= '9' || event.key === '.' || event.key === '/' || event.key === '*' || event.key === '-' || event.key === '+') {
+                        inputCalc(event.key);
+                    } else if (event.key === 'Enter') {
+                        evaluateCalc();
+                    } else if (event.key === 'Backspace') {
+                        backspaceCalc();
+                    } else if (event.key === 'Escape') {
+                        clearCalc();
+                    }
+                }
+            });
+
+            // Listen for global native fullscreen changes to reset pseudo mode cleanly
+            document.addEventListener('fullscreenchange', handleFullscreenChange);
+            document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+        };
+
+        function handleFullscreenChange() {
+            const container = document.getElementById('game-container');
+            if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+                container.classList.remove('pseudo-fullscreen');
+            }
+        }
     </script>
 </body>
 </html>
