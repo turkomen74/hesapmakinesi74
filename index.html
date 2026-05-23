@@ -21,7 +21,7 @@
             transition: background-color 0.3s ease, color 0.3s ease;
         }
 
-        /* Light Theme Styles (For camouflage edu page) */
+        /* Açık Tema Sınıfı (İlk açılıştaki ders sitesi görünümü için) */
         body.light-theme {
             background-color: #f8fafc;
             color: #0f172a;
@@ -60,7 +60,7 @@
             padding: 0;
         }
 
-        /* Fullscreen handling to eliminate bars and sustain high FPS */
+        /* Gelişmiş Tam Ekran ve Çift Katmanlı FPS Optimizasyonu */
         #game-container:fullscreen,
         #game-container:-webkit-full-screen,
         #game-container.pseudo-fullscreen {
@@ -117,6 +117,7 @@
             opacity: 0.8;
         }
 
+        /* Ultra Modern Glassmorphism Hesap Makinesi Tasarımı */
         .modern-calc {
             background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(20px);
@@ -168,6 +169,7 @@
 </head>
 <body class="light-theme">
 
+    <!-- KAMUFLAJ EĞİTİM NAVİGASYONU -->
     <nav id="edu-nav" class="border-b border-slate-200 p-6 flex justify-between items-center bg-white sticky top-0 z-50 shadow-sm">
         <h1 class="text-xl font-extrabold tracking-tight text-slate-900 flex items-center gap-2">
             <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
@@ -181,6 +183,7 @@
         </div>
     </nav>
 
+    <!-- GİZLİ OYUN MENÜSÜ NAVİGASYONU -->
     <nav id="game-nav" class="border-b border-zinc-900 p-6 flex justify-between items-center bg-black sticky top-0 z-50 hidden">
         <h1 class="text-2xl font-black tracking-tighter cursor-pointer uppercase italic" onclick="showCalculator()">
             HESAP <span class="text-red-600">MAKİNESİ</span>
@@ -335,7 +338,7 @@
         </p>
     </footer>
 
-    <!-- OYUN PORTALİ FOOTER -->
+    <!-- OYUN PORTALİ FOOTER (Gizli Geçitle Açılır) -->
     <footer id="footer-games" class="mt-32 border-t border-zinc-950 p-12 text-center hidden">
     </footer>
 
@@ -419,25 +422,60 @@
                 gameUrl: 'https://edumathtools.com/player?src=https%3A%2F%2Fgeet.in.net%2Fget%2Fbloxors%2Fgame.html'
             },
             {
-                id: 'ninecraft',
-                title: 'NINECRAFT',
-                shortDesc: 'Minecraft 1.8.8 Tarayıcı Sürümü.',
-                description: 'Blok dünyasında hayatta kalın ve dilediğiniz yapıları inşa edin.',
-                gameUrl: 'https://play.rantey.com/'
-            },
-            {
                 id: 'yasli-babaanne',
                 title: 'Yaşlı Babaanne',
                 shortDesc: 'Granny: Evden kaçma mücadelesi.',
                 description: 'Babaannenin evinden kaçmak için sessiz olun ve bulmacaları çözün.',
                 gameUrl: 'https://db.mathify.top/html/granny/index.html'
+            },
+            {
+                id: 'bitlife',
+                title: 'BitLife',
+                shortDesc: 'Metin tabanlı yaşam simülasyonu.',
+                description: 'Seçimlerinizle kaderinizi belirleyin! Başarılı bir iş adamı mı olacaksınız yoksa yoldan sapmış bir haydut mu? Sıfırdan bir karakter yaratın ve hayata başlayın.',
+                gameUrl: 'https://edumathtools.com/player?src=https%3A%2F%2Fgeet.in.net%2Fget%2Fbl%2Fgame.html'
+            },
+            {
+                id: 'vex-4',
+                title: 'Vex 4',
+                shortDesc: 'Zorlu engellerle dolu akrobatik platform.',
+                description: 'Testerelerden, ölümcül tuzaklardan zıplayın ve akrobatik yeteneklerinizi sergileyerek Vex 4 parkurunu tamamlayın.',
+                gameUrl: 'https://gameinclassroom.github.io/vex-4/'
+            },
+            {
+                id: 'tetris',
+                title: 'Tetris',
+                shortDesc: 'Klasik blok yerleştirme oyunu.',
+                description: 'Geometrik şekilli blokları dikey boşluk kalmayacak şekilde yerleştirin, sıraları eriterek puan kazanın ve rekorunuzu tazeleyin.',
+                gameUrl: 'https://edumathtools.com/player?src=https%3A%2F%2Fgeet.in.net%2Fget%2Fflash-tetris%2Fgame.html'
+            },
+            {
+                id: 'ates-ve-su-1',
+                title: 'Ateş Ve Su 1',
+                shortDesc: 'Efsanevi yardımlaşma bulmaca oyunu.',
+                description: 'Ateş Çocuk ve Su Kız ile tapınaktaki zorlu engelleri aşın, doğru zamanlama ile butonları kullanarak birbirinize yol açın ve çıkışa ulaşın.',
+                gameUrl: 'https://edumathtools.com/player?src=https%3A%2F%2Fgeet.in.net%2Fget%2Ffire-boy-water-girl%2Fgame.html'
+            },
+            {
+                id: 'ates-ve-su-orman',
+                title: 'Ateş Ve Su Orman',
+                shortDesc: 'Orman Tapınağı macerasına hazır olun!',
+                description: 'Klasik Ateş ve Su elementleri ile Orman Tapınağı içerisinde yer alan labirentleri, düzenekleri çözüp çıkış kapılarına ilerleyin.',
+                gameUrl: 'https://gameinclassroom.github.io/fireboy-and-watergirl-forest-temple/'
+            },
+            {
+                id: 'traffic-racer',
+                title: 'Traffic Racer',
+                shortDesc: 'Makas atarak trafikte hayatta kalın!',
+                description: 'Yoğun akan otobanda hız limitlerini zorlayın. Arabaların arasından makas atarak puan toplayın ve en yüksek skora ulaşın.',
+                gameUrl: 'https://gameinclassroom.github.io/red-driver-5/'
             }
         ];
 
         let currentGameId = null;
         let gamesUnlocked = false;
 
-        // Modern Hesap Makinesi Değişkenleri
+        // Hesap Makinesi Değişkenleri
         let calcValue = '';
         let calcHistVal = '';
 
@@ -452,7 +490,6 @@
         }
 
         function inputCalc(val) {
-            // Hata sonrasında yeni giriş yapıldığında ekranı temizle
             if (calcValue === 'Hata') {
                 calcValue = '';
             }
@@ -478,7 +515,6 @@
         function evaluateCalc() {
             if (!calcValue) return;
             try {
-                // Temel matematik doğrulamasını koru
                 const sanitizedExpr = calcValue.replace(/[^0-9+\-*/.]/g, '');
                 if (sanitizedExpr) {
                     const result = eval(sanitizedExpr);
@@ -491,7 +527,7 @@
             updateDisplay();
         }
 
-        // Sadece tam olarak "747431" yazıldığında tetiklenir
+        // Sadece tam olarak "747431" yazıldığında kilit kalkacaktır
         function checkSecretTrigger() {
             if (calcValue === '747431') {
                 unlockGames();
@@ -501,7 +537,7 @@
         function unlockGames() {
             gamesUnlocked = true;
             
-            // Themes and Nav bar transitions
+            // Temaları ve menüyü karanlık siberpunk moda geçir
             document.body.classList.remove('light-theme');
             document.getElementById('edu-nav').classList.add('hidden');
             document.getElementById('footer-edu').classList.add('hidden');
@@ -513,7 +549,7 @@
         }
 
         function showCalculator() {
-            // Revert back to Camouflage Edu mode
+            // Kamufle Açık Eğitim temasına geri dön
             gamesUnlocked = false;
             document.body.classList.add('light-theme');
             
@@ -531,7 +567,6 @@
             document.getElementById('game-frame').src = '';
             if (document.fullscreenElement) document.exitFullscreen();
             
-            // Reset display
             clearCalc();
             window.scrollTo(0, 0);
         }
@@ -542,7 +577,7 @@
                 return;
             }
 
-            // If games are not yet unlocked, prevent escaping the educational page
+            // Kilit açılmadıysa gizli oyun menüsüne girmeyi engelle
             if (!gamesUnlocked && viewName !== 'calc') {
                 showCalculator();
                 return;
@@ -557,7 +592,6 @@
             
             if (viewName !== 'player') {
                 document.getElementById('game-frame').src = '';
-                // Ensure pseudo fullscreen class is completely clean on navigation
                 document.getElementById('game-container').classList.remove('pseudo-fullscreen');
                 if (document.fullscreenElement) document.exitFullscreen();
             }
@@ -587,13 +621,11 @@
             
             try {
                 if (!document.fullscreenElement && !document.webkitFullscreenElement) {
-                    // Standard and fallback requests
                     if (container.requestFullscreen) {
                         await container.requestFullscreen();
                     } else if (container.webkitRequestFullscreen) {
                         await container.webkitRequestFullscreen();
                     } else {
-                        // Fallback pseudo-fullscreen when strict permissions trigger
                         container.classList.add('pseudo-fullscreen');
                     }
                 } else {
@@ -605,7 +637,7 @@
                     container.classList.remove('pseudo-fullscreen');
                 }
             } catch (err) {
-                console.warn("Full screen API fallback initialized.");
+                console.warn("Tam ekran API kısıtlaması, fallback devrede.");
                 container.classList.toggle('pseudo-fullscreen');
             }
         }
@@ -633,7 +665,7 @@
 
         window.onload = function() {
             renderHome();
-            // Keyboard event support with secure key handling for the calculator view
+            // Klavye olayları desteği
             document.addEventListener('keydown', function(event) {
                 const activeView = document.getElementById('view-calc').classList.contains('hidden') ? 'other' : 'calc';
                 if (activeView === 'calc') {
@@ -649,17 +681,16 @@
                 }
             });
 
-            // Listen for global native fullscreen changes to reset pseudo mode cleanly
+            // Tam ekran değişiklik durumunu izle
+            const handleFullscreenChange = () => {
+                const container = document.getElementById('game-container');
+                if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+                    container.classList.remove('pseudo-fullscreen');
+                }
+            };
             document.addEventListener('fullscreenchange', handleFullscreenChange);
             document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
         };
-
-        function handleFullscreenChange() {
-            const container = document.getElementById('game-container');
-            if (!document.fullscreenElement && !document.webkitFullscreenElement) {
-                container.classList.remove('pseudo-fullscreen');
-            }
-        }
     </script>
 </body>
 </html>
