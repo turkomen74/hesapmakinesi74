@@ -117,32 +117,57 @@
             opacity: 0.8;
         }
 
-        /* Camouflage Light Calculator Buttons */
+        .modern-calc {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 20px 40px rgba(15, 23, 42, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+        }
+
         .calc-btn {
-            background-color: #f1f5f9;
-            border: 1px solid #e2e8f0;
+            background: #ffffff;
+            border: 1px solid rgba(226, 232, 240, 0.8);
             color: #1e293b;
             font-size: 1.25rem;
             font-weight: 600;
-            transition: all 0.1s ease;
+            transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.01);
         }
         .calc-btn:hover {
-            background-color: #e2e8f0;
+            background: #f8fafc;
             border-color: #cbd5e1;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 10px -1px rgba(0, 0, 0, 0.04);
+        }
+        .calc-btn:active {
+            transform: scale(0.96);
+            background: #f1f5f9;
         }
         .calc-btn-op {
-            background-color: #f8fafc;
+            background: #eff6ff;
             color: #2563eb;
+            border-color: #dbeafe;
         }
         .calc-btn-op:hover {
-            background-color: #2563eb;
+            background: #2563eb;
             color: #ffffff;
+            border-color: #2563eb;
+        }
+        .calc-btn-equal {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: #ffffff;
+            border: none;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+        }
+        .calc-btn-equal:hover {
+            background: linear-gradient(135deg, #1d4ed8, #1e40af);
+            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.3);
         }
     </style>
 </head>
 <body class="light-theme">
 
-    <!-- DERS WEB SİTESİ NAVİGASYON BARI (AÇIK TEMA) -->
     <nav id="edu-nav" class="border-b border-slate-200 p-6 flex justify-between items-center bg-white sticky top-0 z-50 shadow-sm">
         <h1 class="text-xl font-extrabold tracking-tight text-slate-900 flex items-center gap-2">
             <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
@@ -156,7 +181,6 @@
         </div>
     </nav>
 
-    <!-- GİZLİ OYUN PORTALİ NAVİGASYON BARI (SİYAH TEMA) -->
     <nav id="game-nav" class="border-b border-zinc-900 p-6 flex justify-between items-center bg-black sticky top-0 z-50 hidden">
         <h1 class="text-2xl font-black tracking-tighter cursor-pointer uppercase italic" onclick="showCalculator()">
             HESAP <span class="text-red-600">MAKİNESİ</span>
@@ -218,37 +242,38 @@
                 </div>
             </div>
 
-            <!-- Sağ Panel: Son Derece Modern Açık Tema Hesap Makinesi -->
-            <div class="bg-white border border-slate-200 rounded-lg p-6 shadow-md">
-                <div class="mb-4">
-                    <p class="text-[10px] font-bold text-slate-400 tracking-widest uppercase mb-1">Hesaplama Ekranı</p>
-                    <input type="text" id="calc-display" readonly class="w-full bg-slate-50 border border-slate-200 text-right text-3xl font-mono p-4 text-slate-800 rounded focus:outline-none focus:border-blue-600 tracking-wide" placeholder="0">
+            <!-- Sağ Panel: ULTRA MODERN Cam Efektli Hesap Makinesi -->
+            <div class="modern-calc rounded-3xl p-6 border">
+                <!-- Dijital Ekran Bölümü -->
+                <div class="mb-6 bg-slate-950/5 rounded-2xl p-5 border border-slate-200/50 flex flex-col justify-end min-h-[110px] text-right shadow-inner relative overflow-hidden">
+                    <span id="calc-history" class="text-xs font-mono text-slate-400 tracking-wide block h-5 truncate pr-1"></span>
+                    <span id="calc-display" class="text-4xl font-semibold font-mono text-slate-800 tracking-wide block truncate pr-1 select-all">0</span>
                 </div>
-                <div class="grid grid-cols-4 gap-2">
-                    <button onclick="clearCalc()" class="calc-btn p-4 rounded col-span-2 text-red-600 hover:bg-red-50 hover:border-red-100">C</button>
-                    <button onclick="backspaceCalc()" class="calc-btn p-4 rounded">⌫</button>
-                    <button onclick="inputCalc('/')" class="calc-btn calc-btn-op p-4 rounded">/</button>
+                <div class="grid grid-cols-4 gap-3">
+                    <button onclick="clearCalc()" class="calc-btn p-4 rounded-2xl col-span-2 text-red-500 hover:bg-red-50 hover:border-red-100">C</button>
+                    <button onclick="backspaceCalc()" class="calc-btn p-4 rounded-2xl flex items-center justify-center">⌫</button>
+                    <button onclick="inputCalc('/')" class="calc-btn calc-btn-op p-4 rounded-2xl">/</button>
 
-                    <button onclick="inputCalc('7')" class="calc-btn p-4 rounded">7</button>
-                    <button onclick="inputCalc('8')" class="calc-btn p-4 rounded">8</button>
-                    <button onclick="inputCalc('9')" class="calc-btn p-4 rounded">9</button>
-                    <button onclick="inputCalc('*')" class="calc-btn calc-btn-op p-4 rounded">*</button>
+                    <button onclick="inputCalc('7')" class="calc-btn p-4 rounded-2xl">7</button>
+                    <button onclick="inputCalc('8')" class="calc-btn p-4 rounded-2xl">8</button>
+                    <button onclick="inputCalc('9')" class="calc-btn p-4 rounded-2xl">9</button>
+                    <button onclick="inputCalc('*')" class="calc-btn calc-btn-op p-4 rounded-2xl">*</button>
 
-                    <button onclick="inputCalc('4')" class="calc-btn p-4 rounded">4</button>
-                    <button onclick="inputCalc('5')" class="calc-btn p-4 rounded">5</button>
-                    <button onclick="inputCalc('6')" class="calc-btn p-4 rounded">6</button>
-                    <button onclick="inputCalc('-')" class="calc-btn calc-btn-op p-4 rounded">-</button>
+                    <button onclick="inputCalc('4')" class="calc-btn p-4 rounded-2xl">4</button>
+                    <button onclick="inputCalc('5')" class="calc-btn p-4 rounded-2xl">5</button>
+                    <button onclick="inputCalc('6')" class="calc-btn p-4 rounded-2xl">6</button>
+                    <button onclick="inputCalc('-')" class="calc-btn calc-btn-op p-4 rounded-2xl">-</button>
 
-                    <button onclick="inputCalc('1')" class="calc-btn p-4 rounded">1</button>
-                    <button onclick="inputCalc('2')" class="calc-btn p-4 rounded">2</button>
-                    <button onclick="inputCalc('3')" class="calc-btn p-4 rounded">3</button>
-                    <button onclick="inputCalc('+')" class="calc-btn calc-btn-op p-4 rounded">+</button>
+                    <button onclick="inputCalc('1')" class="calc-btn p-4 rounded-2xl">1</button>
+                    <button onclick="inputCalc('2')" class="calc-btn p-4 rounded-2xl">2</button>
+                    <button onclick="inputCalc('3')" class="calc-btn p-4 rounded-2xl">3</button>
+                    <button onclick="inputCalc('+')" class="calc-btn calc-btn-op p-4 rounded-2xl">+</button>
 
-                    <button onclick="inputCalc('0')" class="calc-btn p-4 rounded col-span-2">0</button>
-                    <button onclick="inputCalc('.')" class="calc-btn p-4 rounded">.</button>
-                    <button onclick="evaluateCalc()" class="calc-btn calc-btn-op p-4 rounded bg-blue-600 text-white hover:bg-blue-700 hover:border-blue-700">=</button>
+                    <button onclick="inputCalc('0')" class="calc-btn p-4 rounded-2xl col-span-2">0</button>
+                    <button onclick="inputCalc('.')" class="calc-btn p-4 rounded-2xl">.</button>
+                    <button onclick="evaluateCalc()" class="calc-btn calc-btn-equal p-4 rounded-2xl">=</button>
                 </div>
-                <p class="text-slate-400 text-[10px] font-bold text-center mt-6 uppercase tracking-wider">Hızlı ve Sınırsız Tarayıcı Hesaplama Modülü</p>
+                <p class="text-slate-400 text-[9px] font-bold text-center mt-6 uppercase tracking-widest">Hızlı ve Sınırsız Tarayıcı Hesaplama Modülü</p>
             </div>
         </section>
 
@@ -310,11 +335,8 @@
         </p>
     </footer>
 
-    <!-- OYUN PORTALI FOOTER -->
+    <!-- OYUN PORTALİ FOOTER -->
     <footer id="footer-games" class="mt-32 border-t border-zinc-950 p-12 text-center hidden">
-        <p class="text-zinc-700 text-[10px] font-bold tracking-[0.5em] uppercase">
-            &copy; 2026 Ücretsiz Hesap Makinesi. TÜM HAKLARI SAKLIDIR.
-        </p>
     </footer>
 
     <script>
@@ -415,38 +437,63 @@
         let currentGameId = null;
         let gamesUnlocked = false;
 
-        // HESAP MAKİNESİ FONKSİYONLARI VE GİZLİ GEÇİT KONTROLÜ
-        function inputCalc(value) {
+        // Modern Hesap Makinesi Değişkenleri
+        let calcValue = '';
+        let calcHistVal = '';
+
+        function updateDisplay() {
             const display = document.getElementById('calc-display');
-            display.value += value;
+            const historyDisp = document.getElementById('calc-history');
+            
+            display.innerText = calcValue || '0';
+            historyDisp.innerText = calcHistVal || '';
+            
             checkSecretTrigger();
+        }
+
+        function inputCalc(val) {
+            // Hata sonrasında yeni giriş yapıldığında ekranı temizle
+            if (calcValue === 'Hata') {
+                calcValue = '';
+            }
+            calcValue += val;
+            updateDisplay();
         }
 
         function clearCalc() {
-            document.getElementById('calc-display').value = '';
+            calcValue = '';
+            calcHistVal = '';
+            updateDisplay();
         }
 
         function backspaceCalc() {
-            const display = document.getElementById('calc-display');
-            display.value = display.value.slice(0, -1);
+            if (calcValue === 'Hata') {
+                calcValue = '';
+            } else {
+                calcValue = calcValue.slice(0, -1);
+            }
+            updateDisplay();
         }
 
         function evaluateCalc() {
-            const display = document.getElementById('calc-display');
+            if (!calcValue) return;
             try {
-                if (display.value.trim() !== '') {
-                    display.value = eval(display.value);
+                // Temel matematik doğrulamasını koru
+                const sanitizedExpr = calcValue.replace(/[^0-9+\-*/.]/g, '');
+                if (sanitizedExpr) {
+                    const result = eval(sanitizedExpr);
+                    calcHistVal = calcValue + ' =';
+                    calcValue = String(result);
                 }
             } catch (err) {
-                display.value = 'Hata';
+                calcValue = 'Hata';
             }
-            checkSecretTrigger();
+            updateDisplay();
         }
 
         // Sadece tam olarak "747431" yazıldığında tetiklenir
         function checkSecretTrigger() {
-            const displayValue = document.getElementById('calc-display').value;
-            if (displayValue === '747431') {
+            if (calcValue === '747431') {
                 unlockGames();
             }
         }
