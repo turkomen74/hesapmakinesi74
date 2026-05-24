@@ -8,23 +8,23 @@
     <meta name="google-site-verification" content="arWRr6xel-AOzGOFiqQJxSbAfCYYLkQshrRLp8R7Qa4" />
     
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght=300;400;600;700;900&display=swap" rel="stylesheet">
     
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background-color: #000000;
-            color: #ffffff;
+            background-color: #f8fafc;
+            color: #0f172a;
             margin: 0;
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
-            transition: background-color 0.3s ease, color 0.3s ease;
+            transition: background-color 0.8s cubic-bezier(0.16, 1, 0.3, 1), color 0.8s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        /* Açık Tema Sınıfı (İlk açılıştaki ders sitesi görünümü için) */
-        body.light-theme {
-            background-color: #f8fafc;
-            color: #0f172a;
+        /* Portal Aktif Olduğunda Karanlık Moda Geçiş */
+        body.dark-portal-active {
+            background-color: #000000;
+            color: #ffffff;
         }
 
         .game-card {
@@ -38,6 +38,7 @@
         }
         .hidden { display: none !important; }
 
+        /* Fake Fullscreen Optimizasyonu */
         #game-container {
             width: 100%;
             height: 85vh;
@@ -49,6 +50,7 @@
             transform: translateZ(0);
             backface-visibility: hidden;
             will-change: transform;
+            transition: all 0.25s ease-in-out;
         }
 
         #game-frame {
@@ -60,30 +62,33 @@
             padding: 0;
         }
 
-        /* Gelişmiş Tam Ekran ve Çift Katmanlı FPS Optimizasyonu */
-        #game-container:fullscreen,
-        #game-container:-webkit-full-screen,
-        #game-container.pseudo-fullscreen {
-            width: 100vw !important;
-            height: 100vh !important;
-            max-width: 100% !important;
-            max-height: 100% !important;
+        /* Tam Ekran Modu */
+        #game-container.fake-fullscreen-active {
             position: fixed !important;
-            top: 0 !important;
+            top: 40px !important;
             left: 0 !important;
-            z-index: 999999 !important;
+            width: 100vw !important;
+            height: calc(100vh - 40px) !important;
+            z-index: 999998 !important;
             background: #000000 !important;
             padding: 0 !important;
             margin: 0 !important;
         }
 
-        #game-container:fullscreen #game-frame,
-        #game-container:-webkit-full-screen #game-frame,
-        #game-container.pseudo-fullscreen #game-frame {
-            width: 100vw !important;
-            height: 100vh !important;
-            max-width: 100% !important;
-            max-height: 100% !important;
+        /* Tam Ekran Üst Kontrol Barı */
+        #fullscreen-top-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 40px;
+            background-color: #0c0c0c;
+            border-bottom: 1px solid #1f1f1f;
+            z-index: 999999;
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
         }
 
         .btn-primary {
@@ -117,23 +122,23 @@
             opacity: 0.8;
         }
 
-        /* Ultra Modern Glassmorphism Hesap Makinesi Tasarımı */
+        /* Ultra Modern Matematik Atölyesi Hesap Makinesi */
         .modern-calc {
             background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.4);
-            box-shadow: 0 20px 40px rgba(15, 23, 42, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            box-shadow: 0 30px 60px rgba(15, 23, 42, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.6);
         }
 
         .calc-btn {
             background: #ffffff;
-            border: 1px solid rgba(226, 232, 240, 0.8);
+            border: 1px solid rgba(226, 232, 240, 0.9);
             color: #1e293b;
             font-size: 1.25rem;
             font-weight: 600;
             transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.01);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
         }
         .calc-btn:hover {
             background: #f8fafc;
@@ -142,13 +147,13 @@
             box-shadow: 0 6px 10px -1px rgba(0, 0, 0, 0.04);
         }
         .calc-btn:active {
-            transform: scale(0.96);
+            transform: scale(0.95);
             background: #f1f5f9;
         }
         .calc-btn-op {
-            background: #eff6ff;
+            background: #f0f7ff;
             color: #2563eb;
-            border-color: #dbeafe;
+            border-color: #e0f2fe;
         }
         .calc-btn-op:hover {
             background: #2563eb;
@@ -159,31 +164,81 @@
             background: linear-gradient(135deg, #2563eb, #1d4ed8);
             color: #ffffff;
             border: none;
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
         }
         .calc-btn-equal:hover {
             background: linear-gradient(135deg, #1d4ed8, #1e40af);
-            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.3);
+            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35);
+        }
+
+        /* Kusursuz Uzun Dalga Morfolojisi Geçiş Animasyonu */
+        #portal-transition-curtain {
+            position: fixed;
+            inset: 0;
+            background: #000000;
+            z-index: 999999;
+            transform: scale(0);
+            border-radius: 50%;
+            transition: transform 3.5s cubic-bezier(0.86, 0, 0.07, 1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+        }
+
+        #portal-transition-curtain.active {
+            transform: scale(3);
+            pointer-events: auto;
+        }
+
+        #portal-transition-curtain .text-content {
+            transform: scale(0.33);
+            opacity: 0;
+            transition: opacity 1s ease-in-out 1s;
+            color: #ffffff;
+            font-family: 'Inter', sans-serif;
+            text-align: center;
+        }
+
+        #portal-transition-curtain.active .text-content {
+            opacity: 1;
         }
     </style>
 </head>
-<body class="light-theme">
+<body>
 
-    <!-- KAMUFLAJ EĞİTİM NAVİGASYONU -->
-    <nav id="edu-nav" class="border-b border-slate-200 p-6 flex justify-between items-center bg-white sticky top-0 z-50 shadow-sm">
+    <!-- SİNEMATİK UZUN GEÇİŞ PERDESİ -->
+    <div id="portal-transition-curtain">
+        <div class="text-content">
+            <h2 class="text-3xl font-black tracking-widest uppercase italic text-red-600 mb-2">GÜVENLİ PORTAL AKTİFLEŞTİRİLİYOR</h2>
+            <p class="text-zinc-500 font-mono text-xs tracking-[0.3em] uppercase">Siber Koruma Katmanları Yükleniyor...</p>
+        </div>
+    </div>
+
+    <!-- FAKE FULLSCREEN ÜST KONTROL BARI -->
+    <div id="fullscreen-top-bar">
+        <span id="fs-game-title" class="text-xs font-black text-red-600 tracking-wider uppercase italic">OYUN OYNANIYOR</span>
+        <button onclick="exitFakeFullscreen()" class="bg-red-600 hover:bg-red-700 text-white font-extrabold text-[10px] px-4 py-1.5 rounded tracking-wider uppercase flex items-center gap-1">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+            TAM EKRANDAN ÇIK
+        </button>
+    </div>
+
+    <!-- AKADEMİK KAMUFLAJ NAVİGASYONU -->
+    <nav id="edu-nav" class="border-b border-slate-200 p-6 flex justify-between items-center bg-white sticky top-0 z-50 shadow-sm transition-opacity duration-300">
         <h1 class="text-xl font-extrabold tracking-tight text-slate-900 flex items-center gap-2">
             <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
             MATEMATİK <span class="text-blue-600 font-light">ATÖLYESİ</span>
         </h1>
         <div class="hidden md:flex items-center space-x-6 text-xs font-semibold tracking-wider text-slate-500 uppercase">
-            <span class="text-blue-600 border-b-2 border-blue-600 pb-1">Hızlı Hesaplama</span>
-            <span class="hover:text-slate-800 cursor-pointer">Ders Notları</span>
-            <span class="hover:text-slate-800 cursor-pointer">Trigonometri</span>
-            <span class="hover:text-slate-800 cursor-pointer">Formül Kütüphanesi</span>
+            <span class="text-blue-600 border-b-2 border-blue-600 pb-1 cursor-pointer">Hızlı Hesaplama</span>
+            <span class="hover:text-slate-800 cursor-pointer">YKS Hazırlık</span>
+            <span class="hover:text-slate-800 cursor-pointer">LGS Müfredat</span>
+            <span class="hover:text-slate-800 cursor-pointer">Analitik Geometri</span>
         </div>
     </nav>
 
-    <!-- GİZLİ OYUN MENÜSÜ NAVİGASYONU -->
+    <!-- GİZLİ OYUN PORTALİ NAVİGASYONU -->
     <nav id="game-nav" class="border-b border-zinc-900 p-6 flex justify-between items-center bg-black sticky top-0 z-50 hidden">
         <h1 class="text-2xl font-black tracking-tighter cursor-pointer uppercase italic" onclick="showCalculator()">
             HESAP <span class="text-red-600">MAKİNESİ</span>
@@ -205,50 +260,88 @@
         </div>
     </nav>
 
-    <main class="max-w-5xl mx-auto p-6 pt-12">
+    <main class="max-w-7xl mx-auto p-6 pt-12">
         
-        <!-- KAMUFLAJ DERS VE HESAP MAKİNESİ GÖRÜNÜMÜ -->
-        <section id="view-calc" class="grid grid-cols-1 md:grid-cols-3 gap-8 items-start min-h-[70vh]">
+        <!-- YENİ NESİL PREMIUM AKADEMİK PANEL VE HESAP MAKİNESİ -->
+        <section id="view-calc" class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start min-h-[75vh]">
             
-            <!-- Sol Panel: Akademik Formüller / Notlar (Kamuflaj için elzem) -->
-            <div class="md:col-span-2 space-y-6">
-                <div class="bg-white p-6 rounded-lg border border-slate-200 shadow-sm">
-                    <span class="text-xs font-bold text-blue-600 tracking-wider uppercase">Ders Kaynakları</span>
-                    <h2 class="text-2xl font-black text-slate-900 mt-2 mb-4">Temel Matematiksel Formüller</h2>
-                    <p class="text-slate-500 text-sm leading-relaxed mb-6">Matematik Atölyesi, öğrencilerin ve öğretmenlerin hızlı hesaplamalar yapabilmesi ve müfredattaki temel konuları gözden geçirmesi için oluşturulmuş akademik bir yardımcıdır.</p>
+            <!-- Sol Panel: Tamamen Gerçekçi Matematik Eğitim Portalı Paneli -->
+            <div class="lg:col-span-2 space-y-6">
+                
+                <!-- YKS Geri Sayım & Başarı Durumu Widget'ı -->
+                <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div>
+                        <span class="text-xs font-bold text-blue-600 tracking-wider uppercase">Sınav Geri Sayımı</span>
+                        <h2 class="text-xl font-extrabold text-slate-900 mt-1">YKS Hazırlık Sezonu 2026</h2>
+                        <p class="text-slate-500 text-xs mt-1">Öğretmenler tarafından onaylanmış akademik kaynak kütüphanesi.</p>
+                    </div>
+                    <div class="flex items-center gap-2 bg-blue-50/50 border border-blue-100 px-4 py-2.5 rounded-xl">
+                        <span class="w-2.5 h-2.5 bg-blue-600 rounded-full animate-pulse"></span>
+                        <span class="text-xs font-black font-mono text-blue-800 uppercase tracking-widest">AKADEMİK SEZON AKTİF</span>
+                    </div>
+                </div>
+
+                <!-- İnaktif / İnandırıcı Ders Modülleri Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     
-                    <div class="space-y-4">
-                        <div class="p-4 bg-slate-50 rounded border border-slate-100 flex justify-between items-center">
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-sm">İkinci Dereceden Denklemler</h4>
-                                <p class="text-xs text-slate-400 font-mono mt-1">ax² + bx + c = 0</p>
-                            </div>
-                            <span class="text-xs font-semibold font-mono text-slate-500 bg-white px-2 py-1 rounded shadow-sm border border-slate-100">x = (-b ± √Δ) / 2a</span>
+                    <!-- Matematik Analiz Kartı -->
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm hover:border-blue-300 transition-colors">
+                        <div class="w-10 h-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center mb-4">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2m0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
                         </div>
-                        <div class="p-4 bg-slate-50 rounded border border-slate-100 flex justify-between items-center">
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-sm">Trigonometrik Özdeşlikler</h4>
-                                <p class="text-xs text-slate-400 font-mono mt-1">Pisagor Teoremi Karşılığı</p>
+                        <h3 class="font-bold text-slate-800 text-sm">Trigonometrik Fonksiyonlar</h3>
+                        <p class="text-xs text-slate-400 mt-1 leading-relaxed">Sinüs, Kosinüs ve Tanjant eğrilerinin kartezyen grafik analizleri ve birim çember modellemesi.</p>
+                        <div class="mt-4 flex justify-between items-center">
+                            <span class="text-[10px] font-bold text-blue-600 uppercase tracking-wider bg-blue-50 px-2 py-1 rounded">Modül 08</span>
+                            <span class="text-[10px] text-slate-400 font-mono">14 Alt Başlık</span>
+                        </div>
+                    </div>
+
+                    <!-- Geometri Modülü -->
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm hover:border-emerald-300 transition-colors">
+                        <div class="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center mb-4">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v14a1 1 0 01-1 1H5a1 1 0 01-1-1V5z"></path></svg>
+                        </div>
+                        <h3 class="font-bold text-slate-800 text-sm">Analitik Geometri</h3>
+                        <p class="text-xs text-slate-400 mt-1 leading-relaxed">Doğrunun analitik incelenmesi, eğim hesaplama formülleri ve iki nokta arasındaki mesafe teoremleri.</p>
+                        <div class="mt-4 flex justify-between items-center">
+                            <span class="text-[10px] font-bold text-emerald-600 uppercase tracking-wider bg-emerald-50 px-2 py-1 rounded">Modül 12</span>
+                            <span class="text-[10px] text-slate-400 font-mono">9 Alt Başlık</span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Akademik Tablolar ve Önemli Hatırlatıcılar -->
+                <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm">
+                    <h3 class="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2">
+                        <svg class="w-4 h-4 text-amber-500" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 00-1 1v1a1 1 0 002 0V3a1 1 0 00-1-1zM4 4h3a3 3 0 006 0h3a2 2 0 012 2v9a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2zm10 5a1 1 0 00-1 1v3a1 1 0 102 0v-3a1 1 0 00-1-1zM9 11a1 1 0 10-2 0v2a1 1 0 102 0v-2z"></path></svg>
+                        Haftalık Akademik Soru Analizi & Müfredat Takibi
+                    </h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between text-xs text-slate-500 pb-2 border-b border-slate-100">
+                            <span>Sayılar ve Cebir</span>
+                            <div class="w-1/2 bg-slate-100 h-2 rounded-full overflow-hidden">
+                                <div class="bg-blue-600 h-full w-[85%]"></div>
                             </div>
-                            <span class="text-xs font-semibold font-mono text-slate-500 bg-white px-2 py-1 rounded shadow-sm border border-slate-100">sin²(x) + cos²(x) = 1</span>
+                            <span class="font-bold text-slate-700">%85 Tamamlandı</span>
+                        </div>
+                        <div class="flex items-center justify-between text-xs text-slate-500 pb-2 border-b border-slate-100">
+                            <span>Limit ve Türev Giriş</span>
+                            <div class="w-1/2 bg-slate-100 h-2 rounded-full overflow-hidden">
+                                <div class="bg-emerald-500 h-full w-[40%]"></div>
+                            </div>
+                            <span class="font-bold text-slate-700">%40 Tamamlandı</span>
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-white p-6 rounded-lg border border-slate-200 shadow-sm">
-                    <h3 class="text-sm font-bold text-slate-800 mb-3">Sınavlara Hazırlık Hatırlatması</h3>
-                    <ul class="text-xs text-slate-500 space-y-2 list-disc list-inside">
-                        <li>Günde en az 40 paragraf sorusu çözmeyi unutmayın.</li>
-                        <li>Geometri formüllerini her gün düzenli tekrar edin.</li>
-                        <li>Deneme analizlerinizi yaparken yanlış yaptığınız soruların çözümlerini mutlaka öğrenin.</li>
-                    </ul>
-                </div>
             </div>
 
-            <!-- Sağ Panel: ULTRA MODERN Cam Efektli Hesap Makinesi -->
+            <!-- Sağ Panel: ULTRA MODERN APPLE-STYLE HESAP MAKİNESİ -->
             <div class="modern-calc rounded-3xl p-6 border">
-                <!-- Dijital Ekran Bölümü -->
-                <div class="mb-6 bg-slate-950/5 rounded-2xl p-5 border border-slate-200/50 flex flex-col justify-end min-h-[110px] text-right shadow-inner relative overflow-hidden">
+                <!-- Dijital Gösterge Paneli -->
+                <div class="mb-6 bg-slate-950/5 rounded-2xl p-5 border border-slate-200/40 flex flex-col justify-end min-h-[110px] text-right shadow-inner relative overflow-hidden">
                     <span id="calc-history" class="text-xs font-mono text-slate-400 tracking-wide block h-5 truncate pr-1"></span>
                     <span id="calc-display" class="text-4xl font-semibold font-mono text-slate-800 tracking-wide block truncate pr-1 select-all">0</span>
                 </div>
@@ -319,7 +412,7 @@
                     <span class="text-zinc-800">|</span>
                     <button onclick="showView('detail')" class="text-[10px] font-bold text-zinc-500 hover:text-white uppercase tracking-widest">Oyun Sayfasına Dön</button>
                 </div>
-                <button id="fullscreen-btn" onclick="toggleFullscreen()" class="btn-secondary flex items-center">
+                <button id="fullscreen-btn" onclick="enterFakeFullscreen()" class="btn-secondary flex items-center">
                     <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20"><path d="M3 4a1 1 0 011-1h4a1 1 0 010 2H5v3a1 1 0 01-2 0V4zm9 1a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-2 0V5h-3a1 1 0 01-1-1zm-9 9a1 1 0 011 1v3h3a1 1 0 010 2H4a1 1 0 01-1-1v-4a1 1 0 011-1zm13 1a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 010-2h3v-3a1 1 0 011-1z"></path></svg>
                     TAM EKRAN
                 </button>
@@ -330,17 +423,6 @@
         </section>
 
     </main>
-
-    <!-- DERS WEB SİTESİ FOOTER -->
-    <footer id="footer-edu" class="mt-32 border-t border-slate-200 p-12 text-center bg-white">
-        <p class="text-slate-400 text-[10px] font-bold tracking-[0.3em] uppercase">
-            &copy; 2026 Matematik Atölyesi Portal. Tüm Hakları Saklıdır.
-        </p>
-    </footer>
-
-    <!-- OYUN PORTALİ FOOTER (Gizli Geçitle Açılır) -->
-    <footer id="footer-games" class="mt-32 border-t border-zinc-950 p-12 text-center hidden">
-    </footer>
 
     <script>
         const GAMES_DB = [
@@ -527,37 +609,143 @@
             updateDisplay();
         }
 
-        // Sadece tam olarak "747431" yazıldığında kilit kalkacaktır
+        // Sadece tam olarak "741674" yazıldığında kilit kalkacaktır
         function checkSecretTrigger() {
-            if (calcValue === '747431') {
-                unlockGames();
+            if (calcValue === '741674') {
+                triggerUnlockSequence();
             }
+        }
+
+        function playTechMusic() {
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContext) return;
+                const ctx = new AudioContext();
+                const now = ctx.currentTime;
+
+                // Dinamik Ses Sıkıştırıcı (Maksimum gürlükte bile patlama/bozulmayı tamamen engeller)
+                const compressor = ctx.createDynamicsCompressor();
+                compressor.threshold.setValueAtTime(-14, now);
+                compressor.knee.setValueAtTime(30, now);
+                compressor.ratio.setValueAtTime(20, now);
+                compressor.attack.setValueAtTime(0.003, now);
+                compressor.release.setValueAtTime(0.15, now);
+
+                // MASTER GAIN NODE (Tüm geçiş seslerinin seviyesini 3 kat daha güçlü yapan ana ses yükseltici)
+                const masterGain = ctx.createGain();
+                masterGain.gain.setValueAtTime(3.2, now); // Global ses çarpanı 3.2 katına çekildi
+
+                // Bağlantı Yolu: Ses Üretici -> Compressor -> Master Yükseltici -> Çıkış (Hoparlör)
+                masterGain.connect(compressor);
+                compressor.connect(ctx.destination);
+
+                // 1. Derin Siber Bass Sweep (Yeri Sarsan Low-End Bass Frekansı)
+                const osc1 = ctx.createOscillator();
+                const gain1 = ctx.createGain();
+                const filter1 = ctx.createBiquadFilter();
+
+                osc1.type = 'sawtooth';
+                osc1.frequency.setValueAtTime(45, now); // Frekans aralığı daha derin alt baslar için 45Hz'e çekildi
+                osc1.frequency.exponentialRampToValueAtTime(185, now + 3.2);
+
+                filter1.type = 'lowpass';
+                filter1.frequency.setValueAtTime(70, now);
+                filter1.frequency.exponentialRampToValueAtTime(2500, now + 3.2);
+                filter1.Q.setValueAtTime(8, now); // Rezonans arttırılarak bas yırtılması keskinleştirildi
+
+                gain1.gain.setValueAtTime(0.001, now);
+                gain1.gain.linearRampToValueAtTime(0.85, now + 0.6); // Bas şiddeti maksimuma yaklaştırıldı
+                gain1.gain.exponentialRampToValueAtTime(0.001, now + 3.4);
+
+                osc1.connect(filter1);
+                filter1.connect(gain1);
+                gain1.connect(masterGain);
+
+                osc1.start(now);
+                osc1.stop(now + 3.5);
+
+                // 2. Dijital Arpej ve Teknolojik Blipler (Yüksek Volümlü Siber Veri Sinyalleri)
+                const notes = [220, 261.63, 293.66, 329.63, 392.00, 440, 523.25, 587.33, 659.25, 783.99, 880, 1046.50, 1174.66, 1318.51, 1567.98, 1760];
+                const noteDuration = 0.11;
+
+                for (let i = 0; i < 28; i++) {
+                    const time = now + (i * noteDuration);
+                    if (time > now + 3.2) break;
+
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+
+                    const noteIndex = Math.min(Math.floor((i / 28) * notes.length) + (i % 4), notes.length - 1);
+                    const freq = notes[noteIndex];
+
+                    osc.type = i % 2 === 0 ? 'triangle' : 'sine';
+                    osc.frequency.setValueAtTime(freq, time);
+                    osc.frequency.exponentialRampToValueAtTime(freq * 1.25, time + noteDuration); // Pitch kayması daha belirginleştirildi
+
+                    gain.gain.setValueAtTime(0.35, time); // Arpej sesleri 0.18'den 0.35'e çekilerek gürleştirildi
+                    gain.gain.exponentialRampToValueAtTime(0.001, time + noteDuration - 0.01);
+
+                    osc.connect(gain);
+                    gain.connect(masterGain);
+
+                    osc.start(time);
+                    osc.stop(time + noteDuration);
+                }
+
+                // 3. Geçiş Patlaması / Siber Rezonans (Portala Girişteki Devasa Boom Efekti)
+                const boomTime = now + 3.2;
+                const boomOsc = ctx.createOscillator();
+                const boomGain = ctx.createGain();
+
+                boomOsc.type = 'triangle';
+                boomOsc.frequency.setValueAtTime(130, boomTime);
+                boomOsc.frequency.exponentialRampToValueAtTime(25, boomTime + 1.8); // Drop frekansı 25Hz infra-sound sınırına indirildi
+
+                boomGain.gain.setValueAtTime(1.2, boomTime); // Boom vuruş gücü 0.9'dan 1.2'ye çıkarıldı (Yüksek Vuruculuk)
+                boomGain.gain.exponentialRampToValueAtTime(0.001, boomTime + 1.8);
+
+                boomOsc.connect(boomGain);
+                boomGain.connect(masterGain);
+
+                boomOsc.start(boomTime);
+                boomOsc.stop(boomTime + 2.0);
+                
+            } catch (e) {
+                console.error("Müzik sentezlenirken hata oluştu:", e);
+            }
+        }
+
+        function triggerUnlockSequence() {
+            // Sentezlenen teknolojik müziği başlat
+            playTechMusic();
+
+            const curtain = document.getElementById('portal-transition-curtain');
+            curtain.classList.add('active');
+
+            // 3.5 saniyelik şık ve sinematik karanlık dalga animasyon süresi
+            setTimeout(() => {
+                unlockGames();
+                curtain.classList.remove('active');
+            }, 3500); 
         }
 
         function unlockGames() {
             gamesUnlocked = true;
             
-            // Temaları ve menüyü karanlık siberpunk moda geçir
-            document.body.classList.remove('light-theme');
+            // Temaları ve menüyü tamamen karanlık siberpunk moda geçir
+            document.body.classList.add('dark-portal-active');
             document.getElementById('edu-nav').classList.add('hidden');
-            document.getElementById('footer-edu').classList.add('hidden');
-
             document.getElementById('game-nav').classList.remove('hidden');
-            document.getElementById('footer-games').classList.remove('hidden');
 
             showView('home');
         }
 
         function showCalculator() {
-            // Kamufle Açık Eğitim temasına geri dön
             gamesUnlocked = false;
-            document.body.classList.add('light-theme');
+            document.body.classList.remove('dark-portal-active');
             
             document.getElementById('edu-nav').classList.remove('hidden');
-            document.getElementById('footer-edu').classList.remove('hidden');
-
             document.getElementById('game-nav').classList.add('hidden');
-            document.getElementById('footer-games').classList.add('hidden');
 
             document.getElementById('view-calc').classList.remove('hidden');
             document.getElementById('view-home').classList.add('hidden');
@@ -565,7 +753,7 @@
             document.getElementById('view-player').classList.add('hidden');
             
             document.getElementById('game-frame').src = '';
-            if (document.fullscreenElement) document.exitFullscreen();
+            exitFakeFullscreen();
             
             clearCalc();
             window.scrollTo(0, 0);
@@ -592,8 +780,7 @@
             
             if (viewName !== 'player') {
                 document.getElementById('game-frame').src = '';
-                document.getElementById('game-container').classList.remove('pseudo-fullscreen');
-                if (document.fullscreenElement) document.exitFullscreen();
+                exitFakeFullscreen();
             }
             window.scrollTo(0, 0);
         }
@@ -612,34 +799,25 @@
             const game = GAMES_DB.find(g => g.id === gameId);
             if (!game) return;
             document.getElementById('player-title').innerText = game.title;
+            document.getElementById('fs-game-title').innerText = game.title;
             document.getElementById('game-frame').src = game.gameUrl;
             showView('player');
         }
 
-        async function toggleFullscreen() {
+        function enterFakeFullscreen() {
             const container = document.getElementById('game-container');
+            const topBar = document.getElementById('fullscreen-top-bar');
             
-            try {
-                if (!document.fullscreenElement && !document.webkitFullscreenElement) {
-                    if (container.requestFullscreen) {
-                        await container.requestFullscreen();
-                    } else if (container.webkitRequestFullscreen) {
-                        await container.webkitRequestFullscreen();
-                    } else {
-                        container.classList.add('pseudo-fullscreen');
-                    }
-                } else {
-                    if (document.exitFullscreen) {
-                        await document.exitFullscreen();
-                    } else if (document.webkitExitFullscreen) {
-                        await document.webkitExitFullscreen();
-                    }
-                    container.classList.remove('pseudo-fullscreen');
-                }
-            } catch (err) {
-                console.warn("Tam ekran API kısıtlaması, fallback devrede.");
-                container.classList.toggle('pseudo-fullscreen');
-            }
+            container.classList.add('fake-fullscreen-active');
+            topBar.style.display = 'flex';
+        }
+
+        function exitFakeFullscreen() {
+            const container = document.getElementById('game-container');
+            const topBar = document.getElementById('fullscreen-top-bar');
+            
+            container.classList.remove('fake-fullscreen-active');
+            topBar.style.display = 'none';
         }
 
         function renderHome() {
@@ -650,8 +828,15 @@
                 card.className = 'game-card p-10 flex justify-between items-center';
                 card.onclick = () => loadGameDetail(game.id);
                 
+                // Vice City Şehri oyununun üzerine şık "SABİTLENDİ" etiketi
+                let pinBadge = '';
+                if (game.id === 'vice-city-sehri') {
+                    pinBadge = `<div class="mb-3 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-red-600"></span><span class="text-[9px] font-black tracking-[0.2em] text-red-600 uppercase italic">SABİTLENDİ</span></div>`;
+                }
+
                 card.innerHTML = `
                     <div>
+                        ${pinBadge}
                         <h3 class="font-black text-2xl mb-1 uppercase italic tracking-tight text-white">${game.title}</h3>
                         <p class="text-zinc-600 text-[10px] font-bold uppercase tracking-widest">${game.shortDesc}</p>
                     </div>
@@ -680,16 +865,6 @@
                     }
                 }
             });
-
-            // Tam ekran değişiklik durumunu izle
-            const handleFullscreenChange = () => {
-                const container = document.getElementById('game-container');
-                if (!document.fullscreenElement && !document.webkitFullscreenElement) {
-                    container.classList.remove('pseudo-fullscreen');
-                }
-            };
-            document.addEventListener('fullscreenchange', handleFullscreenChange);
-            document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
         };
     </script>
 </body>
