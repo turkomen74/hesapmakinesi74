@@ -8,7 +8,7 @@
     <meta name="google-site-verification" content="arWRr6xel-AOzGOFiqQJxSbAfCYYLkQshrRLp8R7Qa4" />
     
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght=300;400;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
     
     <style>
         body {
@@ -18,6 +18,8 @@
             margin: 0;
             overflow-x: hidden;
             -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
             transition: background-color 0.8s cubic-bezier(0.16, 1, 0.3, 1), color 0.8s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
@@ -171,15 +173,11 @@
             box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35);
         }
 
-        /* Kusursuz Uzun Dalga Morfolojisi Geçiş Animasyonu */
+        /* Bağımsız Katmanlı Geçiş Sistemi (Görsel Bozulmayı Tamamen Önler) */
         #portal-transition-curtain {
             position: fixed;
             inset: 0;
-            background: #000000;
             z-index: 999999;
-            transform: scale(0);
-            border-radius: 50%;
-            transition: transform 3.5s cubic-bezier(0.86, 0, 0.07, 1);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -187,17 +185,38 @@
         }
 
         #portal-transition-curtain.active {
-            transform: scale(3);
             pointer-events: auto;
         }
 
+        /* Sadece siyah arka plan büyür, bu sayede metin asla deforme olmaz */
+        #portal-bg {
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            background-color: #000000;
+            border-radius: 50%;
+            transform: scale(0);
+            transition: transform 3.5s cubic-bezier(0.86, 0, 0.07, 1);
+            will-change: transform;
+            z-index: 1;
+        }
+
+        #portal-transition-curtain.active #portal-bg {
+            transform: scale(35); /* Ekranı tamamen kaplayacak ölçüde büyüme */
+        }
+
+        /* Metin Katmanı: Hiçbir scale uygulanmaz, sadece berrak bir şekilde belirir */
         #portal-transition-curtain .text-content {
-            transform: scale(0.33);
+            position: relative;
+            z-index: 10;
             opacity: 0;
+            transform: none; /* Deformasyonu önlemek için scale kaldırıldı */
             transition: opacity 1s ease-in-out 1s;
             color: #ffffff;
-            font-family: 'Inter', sans-serif;
             text-align: center;
+            backface-visibility: hidden;
+            -webkit-font-smoothing: antialiased;
+            text-shadow: 0 0 1px rgba(255, 255, 255, 0.05);
         }
 
         #portal-transition-curtain.active .text-content {
@@ -209,6 +228,9 @@
 
     <!-- SİNEMATİK UZUN GEÇİŞ PERDESİ -->
     <div id="portal-transition-curtain">
+        <!-- Arka planda pürüzsüzce büyüyen siber daire -->
+        <div id="portal-bg"></div>
+        <!-- Kalitesi asla bozulmayan süper keskin metin katmanı -->
         <div class="text-content">
             <h2 class="text-3xl font-black tracking-widest uppercase italic text-red-600 mb-2">GÜVENLİ PORTAL AKTİFLEŞTİRİLİYOR</h2>
             <p class="text-zinc-500 font-mono text-xs tracking-[0.3em] uppercase">Siber Koruma Katmanları Yükleniyor...</p>
@@ -623,92 +645,119 @@
                 const ctx = new AudioContext();
                 const now = ctx.currentTime;
 
-                // Dinamik Ses Sıkıştırıcı (Maksimum gürlükte bile patlama/bozulmayı tamamen engeller)
+                // Dinamik Ses Sıkıştırıcı (Gür ve berrak sesi korurken cızırtıyı engeller)
                 const compressor = ctx.createDynamicsCompressor();
-                compressor.threshold.setValueAtTime(-14, now);
-                compressor.knee.setValueAtTime(30, now);
-                compressor.ratio.setValueAtTime(20, now);
+                compressor.threshold.setValueAtTime(-10, now);
+                compressor.knee.setValueAtTime(12, now);
+                compressor.ratio.setValueAtTime(12, now);
                 compressor.attack.setValueAtTime(0.003, now);
-                compressor.release.setValueAtTime(0.15, now);
+                compressor.release.setValueAtTime(0.08, now);
 
-                // MASTER GAIN NODE (Tüm geçiş seslerinin seviyesini 3 kat daha güçlü yapan ana ses yükseltici)
+                // MASTER GAIN (Maksimum gürlük ve güç)
                 const masterGain = ctx.createGain();
-                masterGain.gain.setValueAtTime(3.2, now); // Global ses çarpanı 3.2 katına çekildi
+                masterGain.gain.setValueAtTime(1.8, now);
 
-                // Bağlantı Yolu: Ses Üretici -> Compressor -> Master Yükseltici -> Çıkış (Hoparlör)
                 masterGain.connect(compressor);
                 compressor.connect(ctx.destination);
 
-                // 1. Derin Siber Bass Sweep (Yeri Sarsan Low-End Bass Frekansı)
-                const osc1 = ctx.createOscillator();
-                const gain1 = ctx.createGain();
-                const filter1 = ctx.createBiquadFilter();
-
-                osc1.type = 'sawtooth';
-                osc1.frequency.setValueAtTime(45, now); // Frekans aralığı daha derin alt baslar için 45Hz'e çekildi
-                osc1.frequency.exponentialRampToValueAtTime(185, now + 3.2);
-
-                filter1.type = 'lowpass';
-                filter1.frequency.setValueAtTime(70, now);
-                filter1.frequency.exponentialRampToValueAtTime(2500, now + 3.2);
-                filter1.Q.setValueAtTime(8, now); // Rezonans arttırılarak bas yırtılması keskinleştirildi
-
-                gain1.gain.setValueAtTime(0.001, now);
-                gain1.gain.linearRampToValueAtTime(0.85, now + 0.6); // Bas şiddeti maksimuma yaklaştırıldı
-                gain1.gain.exponentialRampToValueAtTime(0.001, now + 3.4);
-
-                osc1.connect(filter1);
-                filter1.connect(gain1);
-                gain1.connect(masterGain);
-
-                osc1.start(now);
-                osc1.stop(now + 3.5);
-
-                // 2. Dijital Arpej ve Teknolojik Blipler (Yüksek Volümlü Siber Veri Sinyalleri)
-                const notes = [220, 261.63, 293.66, 329.63, 392.00, 440, 523.25, 587.33, 659.25, 783.99, 880, 1046.50, 1174.66, 1318.51, 1567.98, 1760];
-                const noteDuration = 0.11;
-
-                for (let i = 0; i < 28; i++) {
-                    const time = now + (i * noteDuration);
-                    if (time > now + 3.2) break;
-
+                // 1. SİNEMATİK AKORD ALICISI (Detuned Sci-Fi Pad Riser)
+                const frequencies = [110, 165, 220, 330]; // Güçlü A Akordu
+                frequencies.forEach((freq, idx) => {
                     const osc = ctx.createOscillator();
+                    const detune = (idx % 2 === 0 ? 8 : -8); // Stereo hissi veren hafif akort sapması
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(freq, now);
+                    osc.detune.setValueAtTime(detune, now);
+                    
+                    // Frekans geçiş süresince tırmanış
+                    osc.frequency.exponentialRampToValueAtTime(freq * 1.6, now + 3.2);
+
+                    const filter = ctx.createBiquadFilter();
+                    filter.type = 'lowpass';
+                    filter.frequency.setValueAtTime(150, now);
+                    // Filtre pürüzsüzce yukarı tırmanarak sesi açar
+                    filter.frequency.exponentialRampToValueAtTime(3500, now + 3.2);
+                    filter.Q.setValueAtTime(3 + idx, now);
+
                     const gain = ctx.createGain();
+                    gain.gain.setValueAtTime(0.001, now);
+                    gain.gain.linearRampToValueAtTime(0.25, now + 1.2);
+                    gain.gain.linearRampToValueAtTime(0.35, now + 2.8);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 3.2); // Tam patlama anında kesilir
 
-                    const noteIndex = Math.min(Math.floor((i / 28) * notes.length) + (i % 4), notes.length - 1);
-                    const freq = notes[noteIndex];
-
-                    osc.type = i % 2 === 0 ? 'triangle' : 'sine';
-                    osc.frequency.setValueAtTime(freq, time);
-                    osc.frequency.exponentialRampToValueAtTime(freq * 1.25, time + noteDuration); // Pitch kayması daha belirginleştirildi
-
-                    gain.gain.setValueAtTime(0.35, time); // Arpej sesleri 0.18'den 0.35'e çekilerek gürleştirildi
-                    gain.gain.exponentialRampToValueAtTime(0.001, time + noteDuration - 0.01);
-
-                    osc.connect(gain);
+                    osc.connect(filter);
+                    filter.connect(gain);
                     gain.connect(masterGain);
 
-                    osc.start(time);
-                    osc.stop(time + noteDuration);
+                    osc.start(now);
+                    osc.stop(now + 3.3);
+                });
+
+                // 2. SİBER RÜZGAR EFEKTİ (White Noise Filter Whoosh)
+                const bufferSize = ctx.sampleRate * 3.2;
+                const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+                const data = buffer.getChannelData(0);
+                for (let i = 0; i < bufferSize; i++) {
+                    data[i] = Math.random() * 2 - 1;
                 }
 
-                // 3. Geçiş Patlaması / Siber Rezonans (Portala Girişteki Devasa Boom Efekti)
-                const boomTime = now + 3.2;
+                const noiseNode = ctx.createBufferSource();
+                noiseNode.buffer = buffer;
+
+                const noiseFilter = ctx.createBiquadFilter();
+                noiseFilter.type = 'bandpass';
+                noiseFilter.frequency.setValueAtTime(180, now);
+                noiseFilter.frequency.exponentialRampToValueAtTime(7500, now + 3.2);
+                noiseFilter.Q.setValueAtTime(2.5, now);
+
+                const noiseGain = ctx.createGain();
+                noiseGain.gain.setValueAtTime(0.001, now);
+                noiseGain.gain.linearRampToValueAtTime(0.14, now + 2.0);
+                noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 3.2);
+
+                noiseNode.connect(noiseFilter);
+                noiseFilter.connect(noiseGain);
+                noiseGain.connect(masterGain);
+                noiseNode.start(now);
+                noiseNode.stop(now + 3.2);
+
+                // 3. KRİSTAL DİJİTAL ÇINLAMA (Hologram Ping Effect)
+                const chimeTime = now + 3.1;
+                const chimeFreqs = [880, 1320, 1760, 2640]; // Cam berraklığında yüksek frekanslar
+                chimeFreqs.forEach((freq) => {
+                    const chimeOsc = ctx.createOscillator();
+                    chimeOsc.type = 'sine';
+                    chimeOsc.frequency.setValueAtTime(freq, chimeTime);
+
+                    const chimeGain = ctx.createGain();
+                    chimeGain.gain.setValueAtTime(0.001, now);
+                    chimeGain.gain.setValueAtTime(0.06, chimeTime); // Hızlı tetiklenme
+                    chimeGain.gain.exponentialRampToValueAtTime(0.001, chimeTime + 2.2); // Uzun ve tatlı yankılanma
+
+                    chimeOsc.connect(chimeGain);
+                    chimeGain.connect(masterGain);
+                    chimeOsc.start(chimeTime);
+                    chimeOsc.stop(chimeTime + 2.6);
+                });
+
+                // 4. TOK VE DERİN SUB-DROP (Cinematic Impact Boom)
+                const boomTime = now + 3.15;
                 const boomOsc = ctx.createOscillator();
                 const boomGain = ctx.createGain();
 
                 boomOsc.type = 'triangle';
-                boomOsc.frequency.setValueAtTime(130, boomTime);
-                boomOsc.frequency.exponentialRampToValueAtTime(25, boomTime + 1.8); // Drop frekansı 25Hz infra-sound sınırına indirildi
+                boomOsc.frequency.setValueAtTime(95, boomTime);
+                boomOsc.frequency.exponentialRampToValueAtTime(28, boomTime + 1.8); // Derin kızılötesi düşüş
 
-                boomGain.gain.setValueAtTime(1.2, boomTime); // Boom vuruş gücü 0.9'dan 1.2'ye çıkarıldı (Yüksek Vuruculuk)
-                boomGain.gain.exponentialRampToValueAtTime(0.001, boomTime + 1.8);
+                boomGain.gain.setValueAtTime(0.001, now);
+                boomGain.gain.setValueAtTime(1.6, boomTime); // Devasa patlama basıncı
+                boomGain.gain.exponentialRampToValueAtTime(0.001, boomTime + 1.9);
 
                 boomOsc.connect(boomGain);
                 boomGain.connect(masterGain);
 
                 boomOsc.start(boomTime);
-                boomOsc.stop(boomTime + 2.0);
+                boomOsc.stop(boomTime + 2.1);
                 
             } catch (e) {
                 console.error("Müzik sentezlenirken hata oluştu:", e);
