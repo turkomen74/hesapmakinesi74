@@ -8,7 +8,7 @@
     <meta name="google-site-verification" content="arWRr6xel-AOzGOFiqQJxSbAfCYYLkQshrRLp8R7Qa4" />
     
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght=300;400;600;700;900&display=swap" rel="stylesheet">
     
     <style>
         body {
@@ -64,7 +64,7 @@
             padding: 0;
         }
 
-        /* Tam Ekran Modu */
+        /* Tam Ekran Modu (Real Fullscreen Fallback ve Fake için) */
         #game-container.fake-fullscreen-active {
             position: fixed !important;
             top: 40px !important;
@@ -75,6 +75,28 @@
             background: #000000 !important;
             padding: 0 !important;
             margin: 0 !important;
+        }
+
+        /* Gerçek Tam Ekran CSS Ayarları (Siyah Barların Önlenmesi ve FPS Optimizasyonu) */
+        #game-container:fullscreen {
+            width: 100vw !important;
+            height: 100vh !important;
+            background: #000000 !important;
+        }
+        #game-container:fullscreen #game-frame {
+            height: calc(100vh - 40px) !important;
+            margin-top: 40px !important;
+            width: 100vw !important;
+        }
+        #game-container:-webkit-full-screen {
+            width: 100vw !important;
+            height: 100vh !important;
+            background: #000000 !important;
+        }
+        #game-container:-webkit-full-screen #game-frame {
+            height: calc(100vh - 40px) !important;
+            margin-top: 40px !important;
+            width: 100vw !important;
         }
 
         /* Tam Ekran Üst Kontrol Barı */
@@ -91,6 +113,16 @@
             align-items: center;
             justify-content: space-between;
             padding: 0 16px;
+        }
+
+        /* Gerçek Tam Ekranda Barı En Üste Çıkarma */
+        #game-container:fullscreen #fullscreen-top-bar,
+        #game-container:-webkit-full-screen #fullscreen-top-bar {
+            position: absolute !important;
+            top: 0 !important;
+            left: 0 !important;
+            display: flex !important;
+            z-index: 2147483647 !important;
         }
 
         .btn-primary {
@@ -173,7 +205,6 @@
             box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35);
         }
 
-        /* Bağımsız Katmanlı Geçiş Sistemi (Görsel Bozulmayı Tamamen Önler) */
         #portal-transition-curtain {
             position: fixed;
             inset: 0;
@@ -182,13 +213,32 @@
             align-items: center;
             justify-content: center;
             pointer-events: none;
+            overflow: hidden;
         }
 
         #portal-transition-curtain.active {
             pointer-events: auto;
         }
 
-        /* Sadece siyah arka plan büyür, bu sayede metin asla deforme olmaz */
+        /* 1. Katman: Siber Şok Dış Halkası (Daha Hızlı ve Neon Kırmızı) */
+        #portal-bg-outer {
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            background: transparent;
+            border: 4px solid #dc2626;
+            border-radius: 50%;
+            transform: scale(0);
+            transition: transform 3.2s cubic-bezier(0.86, 0, 0.07, 1);
+            will-change: transform;
+            z-index: 1;
+        }
+
+        #portal-transition-curtain.active #portal-bg-outer {
+            transform: scale(45);
+        }
+
+        /* 2. Katman: Pürüzsüzce Büyüyen Ana Siyah Perde */
         #portal-bg {
             position: absolute;
             width: 120px;
@@ -198,20 +248,20 @@
             transform: scale(0);
             transition: transform 3.5s cubic-bezier(0.86, 0, 0.07, 1);
             will-change: transform;
-            z-index: 1;
+            z-index: 2;
         }
 
         #portal-transition-curtain.active #portal-bg {
-            transform: scale(35); /* Ekranı tamamen kaplayacak ölçüde büyüme */
+            transform: scale(38);
         }
 
-        /* Metin Katmanı: Hiçbir scale uygulanmaz, sadece berrak bir şekilde belirir */
+        /* 3. Katman: HUD Tarama Hattı ve Kristal Yazı Katmanı */
         #portal-transition-curtain .text-content {
             position: relative;
             z-index: 10;
             opacity: 0;
-            transform: none; /* Deformasyonu önlemek için scale kaldırıldı */
-            transition: opacity 1s ease-in-out 1s;
+            transform: none; /* Metnin bulanıklaşmasını önlemek için asla scale edilmez */
+            transition: opacity 1s ease-in-out 1.2s;
             color: #ffffff;
             text-align: center;
             backface-visibility: hidden;
@@ -226,18 +276,22 @@
 </head>
 <body>
 
-    <!-- SİNEMATİK UZUN GEÇİŞ PERDESİ -->
+    <!-- SİNEMATİK UZUN GEÇİŞ PERDESİ (YENİ SİBER ŞOK HALKALI TASARIM) -->
     <div id="portal-transition-curtain">
-        <!-- Arka planda pürüzsüzce büyüyen siber daire -->
+        <div id="portal-bg-outer"></div>
         <div id="portal-bg"></div>
-        <!-- Kalitesi asla bozulmayan süper keskin metin katmanı -->
         <div class="text-content">
-            <h2 class="text-3xl font-black tracking-widest uppercase italic text-red-600 mb-2">GÜVENLİ PORTAL AKTİFLEŞTİRİLİYOR</h2>
-            <p class="text-zinc-500 font-mono text-xs tracking-[0.3em] uppercase">Siber Koruma Katmanları Yükleniyor...</p>
+            <div class="flex items-center justify-center gap-2 mb-2">
+                <span class="w-2.5 h-2.5 bg-red-600 rounded-full animate-ping"></span>
+                <h2 class="text-3xl font-black tracking-widest uppercase italic text-red-600">GÜVENLİ PORTAL AKTİFLEŞTİRİLİYOR</h2>
+            </div>
+            <div class="h-[1px] w-48 bg-zinc-800 mx-auto mb-3"></div>
+            <p class="text-zinc-500 font-mono text-[10px] tracking-[0.3em] uppercase">Siber Koruma Katmanları Yükleniyor / Kod: 741674</p>
+            <div class="font-mono text-[8px] text-zinc-600 mt-4 tracking-wider">SECURE_TUNNEL_ESTABLISHED: OK</div>
         </div>
     </div>
 
-    <!-- FAKE FULLSCREEN ÜST KONTROL BARI -->
+    <!-- FAKE FULLSCREEN ÜST KONTROL BARI (KAPLAMA KATMANI) -->
     <div id="fullscreen-top-bar">
         <span id="fs-game-title" class="text-xs font-black text-red-600 tracking-wider uppercase italic">OYUN OYNANIYOR</span>
         <button onclick="exitFakeFullscreen()" class="bg-red-600 hover:bg-red-700 text-white font-extrabold text-[10px] px-4 py-1.5 rounded tracking-wider uppercase flex items-center gap-1">
@@ -246,7 +300,6 @@
         </button>
     </div>
 
-    <!-- AKADEMİK KAMUFLAJ NAVİGASYONU -->
     <nav id="edu-nav" class="border-b border-slate-200 p-6 flex justify-between items-center bg-white sticky top-0 z-50 shadow-sm transition-opacity duration-300">
         <h1 class="text-xl font-extrabold tracking-tight text-slate-900 flex items-center gap-2">
             <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
@@ -853,20 +906,65 @@
             showView('player');
         }
 
-        function enterFakeFullscreen() {
+        async function enterFakeFullscreen() {
             const container = document.getElementById('game-container');
             const topBar = document.getElementById('fullscreen-top-bar');
             
-            container.classList.add('fake-fullscreen-active');
-            topBar.style.display = 'flex';
+            try {
+                // Öncelikli olarak gerçek tam ekranı tetiklemeyi dene
+                if (container.requestFullscreen) {
+                    await container.requestFullscreen();
+                } else if (container.webkitRequestFullscreen) {
+                    await container.webkitRequestFullscreen();
+                } else if (container.msRequestFullscreen) {
+                    await container.msRequestFullscreen();
+                }
+            } catch (err) {
+                console.warn("Gerçek tam ekran API kısıtlaması, pseudo-fullscreen fallback kullanılıyor:", err);
+                // Başarısız olursa pseudo-tam ekran moduna geç
+                container.classList.add('fake-fullscreen-active');
+                topBar.style.display = 'flex';
+            }
         }
 
-        function exitFakeFullscreen() {
+        async function exitFakeFullscreen() {
             const container = document.getElementById('game-container');
             const topBar = document.getElementById('fullscreen-top-bar');
             
+            if (document.fullscreenElement || document.webkitFullscreenElement) {
+                try {
+                    if (document.exitFullscreen) {
+                        await document.exitFullscreen();
+                    } else if (document.webkitExitFullscreen) {
+                        await document.webkitExitFullscreen();
+                    }
+                } catch (err) {
+                    console.error("Tam ekrandan çıkış hatası:", err);
+                }
+            }
+            
+            // Tüm yedek sınıfları temizle
             container.classList.remove('fake-fullscreen-active');
             topBar.style.display = 'none';
+        }
+
+        // Tarayıcı üzerinden gerçekleşen Fullscreen değişimlerini izle
+        document.addEventListener('fullscreenchange', handleFullscreenChange);
+        document.addEventListener('webkitfullscreenchange', handleFullscreenChange);
+
+        function handleFullscreenChange() {
+            const container = document.getElementById('game-container');
+            const topBar = document.getElementById('fullscreen-top-bar');
+            
+            if (document.fullscreenElement === container || document.webkitFullscreenElement === container) {
+                // Gerçek tam ekran başladığında, barı ve başlığı aktifleştir
+                topBar.style.display = 'flex';
+            } else {
+                // Gerçek tam ekran bittiğinde, yedek tam ekran da aktif değilse barı gizle
+                if (!container.classList.contains('fake-fullscreen-active')) {
+                    topBar.style.display = 'none';
+                }
+            }
         }
 
         function renderHome() {
