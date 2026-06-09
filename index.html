@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ücretsiz Hesap Makinesi - Çevrimiçi Hızlı Matematiksel İşlemler</title>
+    <!-- Google Search Console Mülk Doğrulaması -->
+    <meta name="google-site-verification" content="arWRr6xel-AOzGOFiqQJxSbAfCYYLkQshrRLp8R7Qa4" />
+    
+    <!-- Web Sitesi İkonu (Favicon) -->
+    <link rel="shortcut icon" href="ico.ico" type="image/x-icon">
+    <link rel="icon" href="ico.ico" type="image/x-icon">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght=300;400;600;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+            margin: 0;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            text-rendering: optimizeLegibility;
+            transition: background-color 0.8s cubic-bezier(0.16, 1, 0.3, 1), color 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* Portal Aktif Olduğunda Karanlık Moda Geçiş */
+        body.dark-portal-active {
+            background-color: #000000;
+            color: #ffffff;
+        }
+
+        .game-card {
+            background-color: #0a0a0a;
+            border: 1px solid #1a1a1a;
+            cursor: pointer;
+            transition: border-color 0.2s ease;
+        }
+        .game-card:hover {
+            border-color: #dc2626;
+        }
+        .hidden { display: none !important; }
+
+        /* Canlı Oturum Koruma - Iframe'i Hafızada Canlı Tutan Özel Sınıf */
+        .player-offscreen {
+            position: absolute !important;
+            top: -99999px !important;
+            left: -99999px !important;
+            width: 1px !important;
+            height: 1px !important;
+            overflow: hidden !important;
+            pointer-events: none !important;
+        }
+
+        /* Fake Fullscreen Optimizasyonu */
+        #game-container {
+            width: 100%;
+            height: 85vh;
+            background: #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            transform: translateZ(0);
+            backface-visibility: hidden;
+            will-change: transform;
+            transition: all 0.25s ease-in-out;
+        }
+
+        #game-frame {
+            border: none;
+            width: 100% !important;
+            height: 100% !important;
+            display: block;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Gerçek Tam Ekran CSS Ayarları (Siyah Barların Önlenmesi ve FPS Optimizasyonu) */
+        #game-container:fullscreen {
+            width: 100vw !important;
+            height: 100vh !important;
+            background: #000000 !important;
+        }
+        #game-container:fullscreen #game-frame {
+            height: 100vh !important;
+            margin-top: 0 !important;
+            width: 100vw !important;
+        }
+        #game-container:-webkit-full-screen {
+            width: 100vw !important;
+            height: 100vh !important;
+            background: #000000 !important;
+        }
+        #game-container:-webkit-full-screen #game-frame {
+            height: 100vh !important;
+            margin-top: 0 !important;
+            width: 100vw !important;
+        }
+
+        /* Güvenlik Politikası Engellediğinde Devreye Girecek CSS Tam Ekran Modu */
+        .pseudo-fullscreen-fallback {
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            z-index: 999998 !important;
+            background: #000000 !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+        .pseudo-fullscreen-fallback #game-frame {
+            width: 100vw !important;
+            height: 100vh !important;
+        }
+
+        .btn-primary {
+            background-color: #dc2626;
+            color: #ffffff;
+            font-weight: 700;
+            padding: 14px 28px;
+            border-radius: 4px;
+            text-align: center;
+            display: inline-block;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        .btn-secondary {
+            background-color: #1a1a1a;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-transform: uppercase;
+            border: 1px solid #33;
+        }
+
+        .nav-icon {
+            transition: opacity 0.2s;
+        }
+        .nav-icon:hover {
+            opacity: 0.8;
+        }
+
+        /* Ultra Modern Matematik Atölyesi Hesap Makinesi */
+        .modern-calc {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(25px);
+            -webkit-backdrop-filter: blur(25px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+            box-shadow: 0 30px 60px rgba(15, 23, 42, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+        }
+
+        .calc-btn {
+            background: #ffffff;
+            border: 1px solid rgba(226, 232, 240, 0.9);
+            color: #1e293b;
+            font-size: 1.25rem;
+            font-weight: 600;
+            transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+        }
+        .calc-btn:hover {
+            background: #f8fafc;
+            border-color: #cbd5e1;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 10px -1px rgba(0, 0, 0, 0.04);
+        }
+        .calc-btn:active {
+            transform: scale(0.95);
+            background: #f1f5f9;
+        }
+        .calc-btn-op {
+            background: #f0f7ff;
+            color: #2563eb;
+            border-color: #e0f2fe;
+        }
+        .calc-btn-op:hover {
+            background: #2563eb;
+            color: #ffffff;
+            border-color: #2563eb;
+        }
+        .calc-btn-equal {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            color: #ffffff;
+            border: none;
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.25);
+        }
+        .calc-btn-equal:hover {
+            background: linear-gradient(135deg, #1d4ed8, #1e40af);
+            box-shadow: 0 6px 16px rgba(37, 99, 235, 0.35);
+        }
+
+        /* SIFIRDAN TASARLANAN ULTRA MODERN SİBER SHUTTER SİSTEMİ */
+        #portal-transition-curtain {
+            position: fixed;
+            inset: 0;
+            z-index: 999999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        #portal-transition-curtain.active {
+            pointer-events: auto;
+        }
+
+        /* Sol ve Sağ Zırh Kapakları */
+        .portal-shutter {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            width: 50%;
+            background-color: #030303;
+            background-image: 
+                radial-gradient(rgba(220, 38, 38, 0.03) 1.5px, transparent 0),
+                radial-gradient(rgba(220, 38, 38, 0.03) 1.5px, transparent 0);
+            background-size: 24px 24px;
+            background-position: 0 0, 12px 12px;
+            transition: transform 0.8s cubic-bezier(0.85, 0, 0.15, 1);
+            will-change: transform;
+            z-index: 1;
+        }
+
+        #portal-shutter-left {
+            left: 0;
+            transform: translateX(-100%);
+            border-right: 1px solid rgba(220, 38, 38, 0.15);
+        }
+
+        #portal-shutter-right {
+            right: 0;
+            transform: translateX(100%);
+            border-left: 1px solid rgba(220, 38, 38, 0.15);
+        }
+
+        #portal-transition-curtain.active #portal-shutter-left {
+            transform: translateX(0);
+        }
+
+        #portal-transition-curtain.active #portal-shutter-right {
+            transform: translateX(0);
+        }
+
+        /* Ortadaki Kırmızı Dikey Lazer Kilidi */
+        #portal-laser-seam {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background-color: #dc2626;
+            box-shadow: 0 0 15px #dc2626, 0 0 30px #dc2626, 0 0 45px rgba(220, 38, 38, 0.5);
+            transform: scaleY(0);
+            transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1) 0.8s;
+            will-change: transform;
+            z-index: 2;
+        }
+
+        #portal-transition-curtain.active #portal-laser-seam {
+            transform: scaleY(1);
+        }
+
+        #portal-transition-curtain .text-content {
+            position: relative;
+            z-index: 10;
+            opacity: 0;
+            transform: translateY(15px);
+            transition: opacity 0.6s ease-out 1.1s, transform 0.6s cubic-bezier(0.16, 1, 0.3, 1) 1.1s;
+            color: #ffffff;
+            text-align: center;
+            backface-visibility: hidden;
+            -webkit-font-smoothing: antialiased;
+            text-shadow: 0 0 1px rgba(255, 255, 255, 0.05);
+        }
+
+        #portal-transition-curtain.active .text-content {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    </style>
+</head>
+<body>
+
+    <!-- SİNEMATİK UZUN GEÇİŞ PERDESİ -->
+    <div id="portal-transition-curtain">
+        <div id="portal-shutter-left" class="portal-shutter"></div>
+        <div id="portal-shutter-right" class="portal-shutter"></div>
+        <div id="portal-laser-seam"></div>
+        <div class="text-content">
+            <div class="flex items-center justify-center gap-2 mb-2">
+                <span class="w-2.5 h-2.5 bg-red-600 rounded-full animate-ping"></span>
+                <h2 class="text-3xl font-black tracking-widest uppercase italic text-red-600">GÜVENLİ PORTAL AKTİFLEŞTİRİLİYOR</h2>
+            </div>
+            <div class="h-[1px] w-48 bg-zinc-800 mx-auto mb-3"></div>
+            <p class="text-zinc-500 font-mono text-[10px] tracking-[0.3em] uppercase">Siber Koruma Katmanları Yükleniyor / Kod: 743274</p>
+            <div class="font-mono text-[8px] text-zinc-600 mt-4 tracking-wider">SECURE_TUNNEL_ESTABLISHED: OK</div>
+        </div>
+    </div>
+
+    <!-- PSEUDO-FULLSCREEN FALLBACK ÇIKIŞ BUTONU -->
+    <button id="fallback-exit-btn" onclick="exitFakeFullscreen()" class="hidden fixed top-4 right-4 z-[999999] bg-red-600 hover:bg-red-700 text-white font-extrabold text-[10px] px-4 py-2.5 rounded shadow-2xl tracking-widest uppercase flex items-center gap-1.5 transition-colors">
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+        TAM EKRANDAN ÇIK
+    </button>
+
+    <!-- ACADEMIC CAMOUFLAGE NAVIGATION -->
+    <nav id="edu-nav" class="border-b border-slate-200 p-6 flex justify-between items-center bg-white sticky top-0 z-50 shadow-sm transition-opacity duration-300">
+        <h1 class="text-xl font-extrabold tracking-tight text-slate-900 flex items-center gap-2">
+            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+            MATEMATİK <span class="text-blue-600 font-light">ATÖLYESİ</span>
+        </h1>
+        <div class="hidden md:flex items-center space-x-6 text-xs font-semibold tracking-wider text-slate-500 uppercase">
+            <span class="text-blue-600 border-b-2 border-blue-600 pb-1 cursor-pointer">Hızlı Hesaplama</span>
+            <span class="hover:text-slate-800 cursor-pointer">YKS Hazırlık</span>
+            <span class="hover:text-slate-800 cursor-pointer">LGS Müfredat</span>
+            <span class="hover:text-slate-800 cursor-pointer">Analitik Geometri</span>
+        </div>
+    </nav>
+
+    <!-- GİZLİ OYUN PORTALİ NAVİGASYONU -->
+    <nav id="game-nav" class="border-b border-zinc-900 p-6 flex justify-between items-center bg-black sticky top-0 z-50 hidden">
+        <h1 class="text-2xl font-black tracking-tighter cursor-pointer uppercase italic" onclick="showCalculator()">
+            HESAP <span class="text-red-600">MAKİNESİ</span>
+        </h1>
+        <div class="flex items-center space-x-6 text-[11px] font-bold tracking-[0.2em] text-zinc-500">
+            <!-- Instagram İkonu -->
+            <a href="https://www.instagram.com/turkomen74/" target="_blank" title="INSTAGRAM" class="nav-icon text-pink-500">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.051.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+            </a>
+            <!-- TikTok İkonu -->
+            <a href="https://www.tiktok.com/@turkomen74" target="_blank" title="TIKTOK" class="nav-icon text-white">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 448 512"><path d="M448 209.91a210.06 210.06 0 0 1-122.77-39.25V349.38A145 145 0 1 1 180.23 204.42a144.39 144.39 0 0 1 31.1 3.39v92.33a70.27 70.27 0 1 0-3.35 68.12 70.16 70.16 0 0 0 31.1-57.41V0h92.1a122.39 122.39 0 0 0 122.77 122.77z"/></svg>
+            </a>
+            <!-- YouTube İkonu -->
+            <a href="https://www.youtube.com/@turkomen74" target="_blank" title="YOUTUBE" class="nav-icon text-red-600">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 3.993-8 4.007z"/></svg>
+            </a>
+            <!-- Discord İkonu -->
+            <a href="https://discord.com/invite/G5thucVR8Z" target="_blank" title="DISCORD" class="nav-icon text-blue-500">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 11.732 11.732 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994a.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>
+            </a>
+            <!-- Files İkonu -->
+            <a href="https://turkomenfiles.lovable.app/" target="_blank" title="TURKOMEN FILES" class="nav-icon text-yellow-500">
+                <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"></path></svg>
+            </a>
+            <a href="#" onclick="showView('home')" class="hover:text-white transition-none text-red-600">OYUN PORTALİ</a>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto p-6 pt-12">
+        
+        <!-- YENİ NESİL PREMIUM AKADEMİK PANEL VE HESAP MAKİNESİ -->
+        <section id="view-calc" class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start min-h-[75vh]">
+            
+            <!-- Sol Panel: Tamamen Gerçekçi Matematik Eğitim Portalı Paneli -->
+            <div class="lg:col-span-2 space-y-6">
+                
+                <!-- YKS Geri Sayım & Başarı Durumu Widget'ı -->
+                <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div>
+                        <span class="text-xs font-bold text-blue-600 tracking-wider uppercase">Sınav Geri Sayımı</span>
+                        <h2 class="text-xl font-extrabold text-slate-900 mt-1">YKS Hazırlık Sezonu 2026</h2>
+                        <p class="text-slate-500 text-xs mt-1">Öğretmenler tarafından onaylanmış akademik kaynak kütüphanesi.</p>
+                    </div>
+                    <div class="flex items-center gap-2 bg-blue-50/50 border border-blue-100 px-4 py-2.5 rounded-xl">
+                        <span class="w-2.5 h-2.5 bg-blue-600 rounded-full animate-pulse"></span>
+                        <span class="text-xs font-black font-mono text-blue-800 uppercase tracking-widest">AKADEMİK SEZON AKTİF</span>
+                    </div>
+                </div>
+
+                <!-- İnaktif / İnandırıcı Ders Modülleri Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    
+                    <!-- Matematik Analiz Kartı -->
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm hover:border-blue-300 transition-colors">
+                        <div class="w-10 h-10 bg-blue-50 text-blue-600 rounded-xl flex items-center justify-center mb-4">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2m0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                        </div>
+                        <h3 class="font-bold text-slate-800 text-sm">Trigonometrik Fonksiyonlar</h3>
+                        <p class="text-xs text-slate-400 mt-1 leading-relaxed">Sinüs, Kosinüs ve Tanjant eğrilerinin kartezyen grafik analizleri ve birim çember modellemesi.</p>
+                        <div class="mt-4 flex justify-between items-center">
+                            <span class="text-[10px] font-bold text-blue-600 uppercase tracking-wider bg-blue-50 px-2 py-1 rounded">Modül 08</span>
+                            <span class="text-[10px] text-slate-400 font-mono">14 Alt Başlık</span>
+                        </div>
+                    </div>
+
+                    <!-- Geometri Modülü -->
+                    <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm hover:border-emerald-300 transition-colors">
+                        <div class="w-10 h-10 bg-emerald-50 text-emerald-600 rounded-xl flex items-center justify-center mb-4">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v14a1 1 0 01-1 1H5a1 1 0 01-1-1V5z"></path></svg>
+                        </div>
+                        <h3 class="font-bold text-slate-800 text-sm">Analitik Geometri</h3>
+                        <p class="text-xs text-slate-400 mt-1 leading-relaxed">Doğrunun analitik incelenmesi, eğim hesaplama formülleri ve iki nokta arasındaki mesafe teoremleri.</p>
+                        <div class="mt-4 flex justify-between items-center">
+                            <span class="text-[10px] font-bold text-emerald-600 uppercase tracking-wider bg-emerald-50 px-2 py-1 rounded">Modül 12</span>
+                            <span class="text-[10px] text-slate-400 font-mono">9 Alt Başlık</span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- Akademik Tablolar ve Önemli Hatırlatıcılar -->
+                <div class="bg-white p-6 rounded-2xl border border-slate-200/80 shadow-sm">
+                    <h3 class="text-sm font-bold text-slate-800 mb-4 flex items-center gap-2">
+                        <svg class="w-4 h-4 text-amber-500" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 00-1 1v1a1 1 0 002 0V3a1 1 0 00-1-1zM4 4h3a3 3 0 006 0h3a2 2 0 012 2v9a2 2 0 01-2 2H4a2 2 0 01-2-2V6a2 2 0 012-2zm10 5a1 1 0 00-1 1v3a1 1 0 102 0v-3a1 1 0 00-1-1zM9 11a1 1 0 10-2 0v2a1 1 0 102 0v-2z"></path></svg>
+                        Haftalık Akademik Soru Analizi & Müfredat Takibi
+                    </h3>
+                    <div class="space-y-3">
+                        <div class="flex items-center justify-between text-xs text-slate-500 pb-2 border-b border-slate-100">
+                            <span>Sayılar ve Cebir</span>
+                            <div class="w-1/2 bg-slate-100 h-2 rounded-full overflow-hidden">
+                                <div class="bg-blue-600 h-full w-[85%]"></div>
+                            </div>
+                            <span class="font-bold text-slate-700">%85 Tamamlandı</span>
+                        </div>
+                        <div class="flex items-center justify-between text-xs text-slate-500 pb-2 border-b border-slate-100">
+                            <span>Limit ve Türev Giriş</span>
+                            <div class="w-1/2 bg-slate-100 h-2 rounded-full overflow-hidden">
+                                <div class="bg-emerald-500 h-full w-[40%]"></div>
+                            </div>
+                            <span class="font-bold text-slate-700">%40 Tamamlandı</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Sağ Panel: ULTRA MODERN APPLE-STYLE HESAP MAKİNESİ -->
+            <div class="modern-calc rounded-3xl p-6 border">
+                <!-- Dijital Gösterge Paneli -->
+                <div class="mb-6 bg-slate-950/5 rounded-2xl p-5 border border-slate-200/40 flex flex-col justify-end min-h-[110px] text-right shadow-inner relative overflow-hidden">
+                    <span id="calc-history" class="text-xs font-mono text-slate-400 tracking-wide block h-5 truncate pr-1"></span>
+                    <span id="calc-display" class="text-4xl font-semibold font-mono text-slate-800 tracking-wide block truncate pr-1 select-all">0</span>
+                </div>
+                <div class="grid grid-cols-4 gap-3">
+                    <button onclick="clearCalc()" class="calc-btn p-4 rounded-2xl col-span-2 text-red-500 hover:bg-red-50 hover:border-red-100">C</button>
+                    <button onclick="backspaceCalc()" class="calc-btn p-4 rounded-2xl flex items-center justify-center">⌫</button>
+                    <button onclick="inputCalc('/')" class="calc-btn calc-btn-op p-4 rounded-2xl">/</button>
+
+                    <button onclick="inputCalc('7')" class="calc-btn p-4 rounded-2xl">7</button>
+                    <button onclick="inputCalc('8')" class="calc-btn p-4 rounded-2xl">8</button>
+                    <button onclick="inputCalc('9')" class="calc-btn p-4 rounded-2xl">9</button>
+                    <button onclick="inputCalc('*')" class="calc-btn calc-btn-op p-4 rounded-2xl">*</button>
+
+                    <button onclick="inputCalc('4')" class="calc-btn p-4 rounded-2xl">4</button>
+                    <button onclick="inputCalc('5')" class="calc-btn p-4 rounded-2xl">5</button>
+                    <button onclick="inputCalc('6')" class="calc-btn p-4 rounded-2xl">6</button>
+                    <button onclick="inputCalc('-')" class="calc-btn calc-btn-op p-4 rounded-2xl">-</button>
+
+                    <button onclick="inputCalc('1')" class="calc-btn p-4 rounded-2xl">1</button>
+                    <button onclick="inputCalc('2')" class="calc-btn p-4 rounded-2xl">2</button>
+                    <button onclick="inputCalc('3')" class="calc-btn p-4 rounded-2xl">3</button>
+                    <button onclick="inputCalc('+')" class="calc-btn calc-btn-op p-4 rounded-2xl">+</button>
+
+                    <button onclick="inputCalc('0')" class="calc-btn p-4 rounded-2xl col-span-2">0</button>
+                    <button onclick="inputCalc('.')" class="calc-btn p-4 rounded-2xl">.</button>
+                    <button onclick="evaluateCalc()" class="calc-btn calc-btn-equal p-4 rounded-2xl">=</button>
+                </div>
+                <p class="text-slate-400 text-[9px] font-bold text-center mt-6 uppercase tracking-widest">Hızlı ve Sınırsız Tarayıcı Hesaplama Modülü</p>
+            </div>
+        </section>
+
+        <!-- GİZLİ OYUN MENÜSÜ -->
+        <section id="view-home" class="hidden">
+            <!-- Kaldığın Yerden Devam Et Akıllı Save Kutusu -->
+            <div id="resume-container" class="hidden bg-zinc-950 p-6 rounded-2xl border border-red-900/30 mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                    <span class="text-red-500 font-mono text-[9px] tracking-widest uppercase block mb-1">■ OTURUM GÜVENLİĞİ AKTİF</span>
+                    <h3 class="text-lg font-black tracking-tight text-white uppercase italic">Son Oynadığın Oyun Korumada!</h3>
+                    <p class="text-zinc-500 text-xs">Aşağıdaki butona basarak son oturumuna kaldığın yerden hemen dönebilirsin.</p>
+                </div>
+                <button onclick="resumeLastGame()" class="btn-primary flex items-center gap-2 whitespace-nowrap text-sm tracking-widest py-3 px-6">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"></path></svg>
+                    DEVAM ET
+                </button>
+            </div>
+
+            <h2 class="text-xs font-black mb-10 tracking-[0.3em] text-zinc-600 uppercase italic">Katalog / Oyun Seçiniz</h2>
+            <div id="game-list" class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <!-- Oyunlar JavaScript ile dinamik yerleştirilecek -->
+            </div>
+        </section>
+
+        <!-- OYUN DETAY SAYFASI -->
+        <section id="view-detail" class="hidden">
+            <button onclick="showView('home')" class="mb-12 text-zinc-500 hover:text-white flex items-center text-[10px] font-bold uppercase tracking-widest transition-none">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                KATALOĞA DÖN
+            </button>
+            
+            <div class="max-w-4xl mx-auto">
+                <h2 id="detail-title" class="text-6xl md:text-8xl font-black mb-8 text-red-600 uppercase italic tracking-tighter leading-none"></h2>
+                <div class="h-1 w-24 bg-red-600 mb-12"></div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-12 items-start">
+                    <div class="md:col-span-2">
+                        <h3 class="text-zinc-600 text-xs font-black uppercase tracking-[0.2em] mb-4">Oyun Hakkında Bilgi</h3>
+                        <p id="detail-desc" class="text-zinc-300 text-lg leading-relaxed mb-10 font-medium"></p>
+                    </div>
+                    <div class="bg-zinc-950 p-6 border border-zinc-900">
+                         <h3 class="text-zinc-600 text-xs font-black uppercase tracking-[0.2em] mb-6">Kontrol Paneli</h3>
+                         <button id="play-btn" class="btn-primary w-full text-lg tracking-tight">ŞİMDİ OYNA</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- OYUN OYNAMA EKRANI (OPTIMIZED IFRAME WITH KEEPALIVE) -->
+        <!-- Tarayıcı belleğinde sıfırlanmadan açık kalması için default olarak player-offscreen sınıfıyla başlar -->
+        <section id="view-player" class="player-offscreen">
+            <div class="flex justify-between items-center mb-6">
+                <div class="flex items-center gap-4">
+                    <h2 id="player-title" class="text-sm font-black text-red-600 uppercase italic tracking-widest"></h2>
+                    <span class="text-zinc-800">|</span>
+                    <button onclick="showView('detail')" class="text-[10px] font-bold text-zinc-500 hover:text-white uppercase tracking-widest">Oyun Sayfasına Dön</button>
+                </div>
+                <button id="fullscreen-btn" onclick="enterFakeFullscreen()" class="btn-secondary flex items-center">
+                    <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20"><path d="M3 4a1 1 0 011-1h4a1 1 0 010 2H5v3a1 1 0 01-2 0V4zm9 1a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-2 0V5h-3a1 1 0 01-1-1zm-9 9a1 1 0 011 1v3h3a1 1 0 010 2H4a1 1 0 01-1-1v-4a1 1 0 011-1zm13 1a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 010-2h3v-3a1 1 0 011-1z"></path></svg>
+                    TAM EKRAN
+                </button>
+            </div>
+            <div id="game-container" class="rounded-sm overflow-hidden border border-zinc-900 shadow-2xl relative">
+                <iframe id="game-frame" src="" allow="fullscreen; autoplay; encrypted-media; picture-in-picture; cross-origin-isolated"></iframe>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        const GAMES_DB = [
+            {
+                id: 'vice-city-sehri',
+                title: 'Vice City Şehri',
+                shortDesc: '80\'lerin neon ışıklı suç dünyası.',
+                description: 'Tommy Vercetti ile 80\'lerin Vice City atmosferine geri dönün. Bu klasik aksiyon oyununda şehri fethetmeye hazırlanın.',
+                gameUrl: 'https://learn.edumain.net/games/vice-city/index.html?fullscreen=0&sc=1'
+            },
+            {
+                id: 'thorn-and-balloons',
+                title: 'Thorn And Balloons',
+                shortDesc: 'Fizik tabanlı beceri ve balon patlatma mücadelesi!',
+                description: 'Thorn And Balloons, keskin refleksler ve akıllıca açılar belirleme üzerine kurulu eğlenceli bir fizik-bulmaca oyunudur. Kontrol ettiğiniz dikenli topu doğru zamanda, doğru ivme ve açıyla fırlatarak oyun alanındaki tüm renkli balonları patlatmalısınız.',
+                gameUrl: 'https://thornandballoons.com/game/index.html'
+            },
+            {
+                id: 'scrap-metal-3',
+                title: 'Scrap Metal 3',
+                shortDesc: '3D Gerçekçi Araba Parçalama Simülasyonu.',
+                description: 'Detaylı hasar modellemesi ve özgür dünya sürüşü! Scrap Metal 3, tarayıcıda 3D fizik motorunu sonuna kadar kullanan bir yapımdır. Bu sürümde tam ekran optimizasyonu yapılarak FPS kayıpları minimize edilmiştir.',
+                gameUrl: 'https://edumathtools.com/player/?src=https%3A%2F%2Fgeet.in.net%2Fget%2Fscrap-metal%2Fgame.html'
+            },
+            {
+                id: 'supheli-imposter',
+                title: 'ŞÜPHELİ İMPOSTER',
+                shortDesc: 'Mürettebatın içindeki haini bul!',
+                description: 'Among Us esintili bu oyunda, bir uzay gemisinde görevleri tamamlamaya çalışırken aranızdaki "Imposter"ı deşifre etmelisiniz.',
+                gameUrl: 'https://edumathtools.com/player?src=https%3A%2F%2Fgeet.in.net%2Fget%2Famong-us%2Fgame.html'
+            },
+            {
+                id: '2d-ac-kopek-baligi',
+                title: '2D AÇ KÖPEK BALIĞI',
+                shortDesc: 'Denizin en tehlikeli avcısı olun.',
+                description: 'Hungry Shark dünyasında olduğu gibi, devasa bir köpek balığını kontrol edin ve denizde ne bulursanız yiyerek büyüyün!',
+                gameUrl: 'https://edumathtools.com/player/?src=https%3A%2F%2Fgeet.in.net%2Fget%2Fangry-sharks%2Fgame.html'
+            },
+            {
+                id: 'stickman-hook',
+                title: 'STICKMAN HOOK',
+                shortDesc: 'Kancanla bir Spiderman gibi savrul!',
+                description: 'Örümcek adam mekanikleriyle donatılmış bu fizik oyununda, kancalarınızı kullanarak platformlar arasında akrobatik hareketler yapın.',
+                gameUrl: 'https://edumathtools.com/player?src=https%3A%2F%2Fgeet.in.net%2Fget%2Fstickman-hook%2Fgame.html'
+            },
+            {
+                id: 'world-hardest-game',
+                title: 'World Hardest Game',
+                shortDesc: 'Dünyanın en zor 2D oyunu.',
+                description: 'Mavi engellere çarpmadan tüm sarı noktaları toplayın. Sinir katsayınızı zorlayacak bir klasik.',
+                gameUrl: 'https://edumathtools.com/player/?src=https%3A%2F%2Fgeet.in.net%2Fget%2Fworlds-hardest-game%2Fgame.html'
+            },
+            {
+                id: 'race-survival',
+                title: 'RACE SURVIVAL ARENA KING',
+                shortDesc: '3D Aksiyon dolu araba arenası!',
+                description: 'Rakiplerinizi platformdan dışarı itin ve son hayatta kalan araç olun.',
+                gameUrl: 'https://classroomlesson.github.io/basic-ruffle-player/html/race_survival_arena_king/index.html'
+            },
+            {
+                id: 'elastik-yuz',
+                title: 'ELASTİK YÜZ',
+                shortDesc: 'Eğlenceli stres atma simülasyonu.',
+                description: 'Fizik tabanlı yapısıyla yüz hatlarını dilediğiniz gibi esnetin.',
+                gameUrl: 'https://edumathtools.com/player/?src=https%3A%2F%2Fgeet.in.net%2Fget%2Felastic-face%2Fgame.html'
+            },
+            {
+                id: 'surfers-subway',
+                title: 'Surfers Subway',
+                shortDesc: 'Sonsuz koşu macerası!',
+                description: 'Metro raylarında engellerden kaçın ve en yüksek puanı yapın.',
+                gameUrl: 'https://edumathtools.com/player?src=https%3A%2F%2Fgeet.in.net%2Fget%2Fsubway-surfers-ny%2Fgame.html'
+            },
+            {
+                id: 'bloxorz',
+                title: 'BLOXORZ',
+                shortDesc: 'Zeka ve mantık oyunu.',
+                description: '3D bir bloğu delikten düşürmek için platform üzerinde yuvarlayın.',
+                gameUrl: 'https://edumathtools.com/player?src=https%3A%2F%2Fgeet.in.net%2Fget%2Fbloxors%2Fgame.html'
+            },
+            {
+                id: 'yasli-babaanne',
+                title: 'Yaşlı Babaanne',
+                shortDesc: 'Granny: Evden kaçma mücadelesi.',
+                description: 'Babaannenin evinden kaçmak için sessiz olun ve bulmacaları çözün.',
+                gameUrl: 'https://db.mathify.top/html/granny/index.html'
+            },
+            {
+                id: 'bitlife',
+                title: 'BitLife',
+                shortDesc: 'Metin tabanlı yaşam simülasyonu.',
+                description: 'Seçimlerinizle kaderinizi belirleyin! Başarılı bir iş adamı mı olacaksınız yoksa yoldan sapmış bir haydut mu? Sıfırdan bir karakter yaratın ve hayata başlayın.',
+                gameUrl: 'https://edumathtools.com/player?src=https%3A%2F%2Fgeet.in.net%2Fget%2Fbl%2Fgame.html'
+            },
+            {
+                id: 'vex-4',
+                title: 'Vex 4',
+                shortDesc: 'Zorlu engellerle dolu akrobatik platform.',
+                description: 'Testerelerden, ölümcül tuzaklardan zıplayın ve akrobatik yeteneklerinizi sergileyerek Vex 4 parkurunu tamamlayın.',
+                gameUrl: 'https://gameinclassroom.github.io/vex-4/'
+            },
+            {
+                id: 'tetris',
+                title: 'Tetris',
+                shortDesc: 'Klasik blok yerleştirme oyunu.',
+                description: 'Geometrik şekilli blokları dikey boşluk kalmayacak şekilde yerleştirin, sıraları eriterek puan kazanın ve rekorunuzu tazeleyin.',
+                gameUrl: 'https://edumathtools.com/player?src=https%3A%2F%2Fgeet.in.net%2Fget%2Fflash-tetris%2Fgame.html'
+            },
+            {
+                id: 'ates-ve-su-1',
+                title: 'Ateş Ve Su 1',
+                shortDesc: 'Efsanevi yardımlaşma bulmaca oyunu.',
+                description: 'Ateş Çocuk ve Su Kız ile tapınaktaki zorlu engelleri aşın, doğru zamanlama ile butonları kullanarak birbirinize yol açın ve çıkışa ulaşın.',
+                gameUrl: 'https://edumathtools.com/player?src=https%3A%2F%2Fgeet.in.net%2Fget%2Ffire-boy-water-girl%2Fgame.html'
+            },
+            {
+                id: 'ates-ve-su-orman',
+                title: 'Ateş Ve Su Orman',
+                shortDesc: 'Orman Tapınağı macerasına hazır olun!',
+                description: 'Klasik Ateş ve Su elementleri ile Orman Tapınağı içerisinde yer alan labirentleri, düzenekleri çözüp çıkış kapılarına ilerleyin.',
+                gameUrl: 'https://gameinclassroom.github.io/fireboy-and-watergirl-forest-temple/'
+            },
+            {
+                id: 'traffic-racer',
+                title: 'Traffic Racer',
+                shortDesc: 'Makas atarak trafikte hayatta kalın!',
+                description: 'Yoğun akan otobanda hız limitlerini zorlayın. Arabaların arasından makas atarak puan toplayın ve en yüksek skora ulaşın.',
+                gameUrl: 'https://gameinclassroom.github.io/red-driver-5/'
+            }
+        ];
+
+        let currentGameId = null;
+        let lastPlayedGameId = null;
+        let gamesUnlocked = false;
+
+        // Hesap Makinesi Değişkenleri
+        let calcValue = '';
+        let calcHistVal = '';
+
+        function updateDisplay() {
+            const display = document.getElementById('calc-display');
+            const historyDisp = document.getElementById('calc-history');
+            
+            display.innerText = calcValue || '0';
+            historyDisp.innerText = calcHistVal || '';
+            
+            checkSecretTrigger();
+        }
+
+        function inputCalc(val) {
+            if (calcValue === 'Hata') {
+                calcValue = '';
+            }
+            calcValue += val;
+            updateDisplay();
+        }
+
+        function clearCalc() {
+            calcValue = '';
+            calcHistVal = '';
+            updateDisplay();
+        }
+
+        function backspaceCalc() {
+            if (calcValue === 'Hata') {
+                calcValue = '';
+            } else {
+                calcValue = calcValue.slice(0, -1);
+            }
+            updateDisplay();
+        }
+
+        function evaluateCalc() {
+            if (!calcValue) return;
+            try {
+                const sanitizedExpr = calcValue.replace(/[^0-9+\-*/.]/g, '');
+                if (sanitizedExpr) {
+                    const result = eval(sanitizedExpr);
+                    calcHistVal = calcValue + ' =';
+                    calcValue = String(result);
+                }
+            } catch (err) {
+                calcValue = 'Hata';
+            }
+            updateDisplay();
+        }
+
+        // Sadece tam olarak "743274" yazıldığında kilit kalkacaktır
+        function checkSecretTrigger() {
+            if (calcValue === '743274') {
+                triggerUnlockSequence();
+            }
+        }
+
+        function playTechMusic() {
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContext) return;
+                const ctx = new AudioContext();
+                const now = ctx.currentTime;
+
+                // Dinamik Ses Sıkıştırıcı
+                const compressor = ctx.createDynamicsCompressor();
+                compressor.threshold.setValueAtTime(-10, now);
+                compressor.knee.setValueAtTime(12, now);
+                compressor.ratio.setValueAtTime(12, now);
+                compressor.attack.setValueAtTime(0.003, now);
+                compressor.release.setValueAtTime(0.08, now);
+
+                // MASTER GAIN
+                const masterGain = ctx.createGain();
+                masterGain.gain.setValueAtTime(1.8, now);
+
+                masterGain.connect(compressor);
+                compressor.connect(ctx.destination);
+
+                // SİNEMATİK AKORD ALICISI
+                const frequencies = [110, 165, 220, 330];
+                frequencies.forEach((freq, idx) => {
+                    const osc = ctx.createOscillator();
+                    const detune = (idx % 2 === 0 ? 8 : -8);
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(freq, now);
+                    osc.detune.setValueAtTime(detune, now);
+                    
+                    osc.frequency.exponentialRampToValueAtTime(freq * 1.6, now + 3.2);
+
+                    const filter = ctx.createBiquadFilter();
+                    filter.type = 'lowpass';
+                    filter.frequency.setValueAtTime(150, now);
+                    filter.frequency.exponentialRampToValueAtTime(3500, now + 3.2);
+                    filter.Q.setValueAtTime(3 + idx, now);
+
+                    const gain = ctx.createGain();
+                    gain.gain.setValueAtTime(0.001, now);
+                    gain.gain.linearRampToValueAtTime(0.25, now + 1.2);
+                    gain.gain.linearRampToValueAtTime(0.35, now + 2.8);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 3.2);
+
+                    osc.connect(filter);
+                    filter.connect(gain);
+                    gain.connect(masterGain);
+
+                    osc.start(now);
+                    osc.stop(now + 3.3);
+                });
+
+                // SİBER RÜZGAR EFEKTİ
+                const bufferSize = ctx.sampleRate * 3.2;
+                const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+                const data = buffer.getChannelData(0);
+                for (let i = 0; i < bufferSize; i++) {
+                    data[i] = Math.random() * 2 - 1;
+                }
+
+                const noiseNode = ctx.createBufferSource();
+                noiseNode.buffer = buffer;
+
+                const noiseFilter = ctx.createBiquadFilter();
+                noiseFilter.type = 'bandpass';
+                noiseFilter.frequency.setValueAtTime(180, now);
+                noiseFilter.frequency.exponentialRampToValueAtTime(7500, now + 3.2);
+                noiseFilter.Q.setValueAtTime(2.5, now);
+
+                const noiseGain = ctx.createGain();
+                noiseGain.gain.setValueAtTime(0.001, now);
+                noiseGain.gain.linearRampToValueAtTime(0.14, now + 2.0);
+                noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 3.2);
+
+                noiseNode.connect(noiseFilter);
+                noiseFilter.connect(noiseGain);
+                noiseGain.connect(masterGain);
+                noiseNode.start(now);
+                noiseNode.stop(now + 3.2);
+
+                // KRİSTAL DİJİTAL ÇINLAMA
+                const chimeTime = now + 3.1;
+                const chimeFreqs = [880, 1320, 1760, 2640];
+                chimeFreqs.forEach((freq) => {
+                    const chimeOsc = ctx.createOscillator();
+                    chimeOsc.type = 'sine';
+                    chimeOsc.frequency.setValueAtTime(freq, chimeTime);
+
+                    const chimeGain = ctx.createGain();
+                    chimeGain.gain.setValueAtTime(0.001, now);
+                    chimeGain.gain.setValueAtTime(0.06, chimeTime);
+                    chimeGain.gain.exponentialRampToValueAtTime(0.001, chimeTime + 2.2);
+
+                    chimeOsc.connect(chimeGain);
+                    chimeGain.connect(masterGain);
+                    chimeOsc.start(chimeTime);
+                    chimeOsc.stop(chimeTime + 2.6);
+                });
+
+                // TOK VE DERİN SUB-DROP
+                const boomTime = now + 3.15;
+                const boomOsc = ctx.createOscillator();
+                const boomGain = ctx.createGain();
+
+                boomOsc.type = 'triangle';
+                boomOsc.frequency.setValueAtTime(95, boomTime);
+                boomOsc.frequency.exponentialRampToValueAtTime(28, boomTime + 1.8);
+
+                boomGain.gain.setValueAtTime(0.001, now);
+                boomGain.gain.setValueAtTime(1.6, boomTime);
+                boomGain.gain.exponentialRampToValueAtTime(0.001, boomTime + 1.9);
+
+                boomOsc.connect(boomGain);
+                boomGain.connect(masterGain);
+
+                boomOsc.start(boomTime);
+                boomOsc.stop(boomTime + 2.1);
+                
+            } catch (e) {
+                console.error("Müzik sentezlenirken hata oluştu:", e);
+            }
+        }
+
+        function triggerUnlockSequence() {
+            playTechMusic();
+
+            const curtain = document.getElementById('portal-transition-curtain');
+            curtain.classList.add('active');
+
+            setTimeout(() => {
+                unlockGames();
+                curtain.classList.remove('active');
+            }, 3500); 
+        }
+
+        function unlockGames() {
+            gamesUnlocked = true;
+            
+            document.body.classList.add('dark-portal-active');
+            document.getElementById('edu-nav').classList.add('hidden');
+            document.getElementById('game-nav').classList.remove('hidden');
+
+            checkSaveState();
+            showView('home');
+        }
+
+        function checkSaveState() {
+            const savedId = localStorage.getItem('last_played_game_id');
+            const resumeContainer = document.getElementById('resume-container');
+            if (savedId) {
+                const gameExists = GAMES_DB.some(g => g.id === savedId);
+                if (gameExists) {
+                    lastPlayedGameId = savedId;
+                    resumeContainer.classList.remove('hidden');
+                    return;
+                }
+            }
+            resumeContainer.classList.add('hidden');
+        }
+
+        function resumeLastGame() {
+            if (lastPlayedGameId) {
+                loadGamePlayer(lastPlayedGameId);
+            }
+        }
+
+        function showCalculator() {
+            gamesUnlocked = false;
+            document.body.classList.remove('dark-portal-active');
+            
+            document.getElementById('edu-nav').classList.remove('hidden');
+            document.getElementById('game-nav').classList.add('hidden');
+
+            document.getElementById('view-calc').classList.remove('hidden');
+            document.getElementById('view-home').classList.add('hidden');
+            document.getElementById('view-detail').classList.add('hidden');
+            
+            // Iframe'i tamamen silmek yerine sadece offscreen yaparak can dostu korumayı aktif tutuyoruz!
+            document.getElementById('view-player').classList.add('player-offscreen');
+            
+            exitFakeFullscreen();
+            clearCalc();
+            window.scrollTo(0, 0);
+        }
+
+        function showView(viewName) {
+            if (viewName === 'calc') {
+                showCalculator();
+                return;
+            }
+
+            if (!gamesUnlocked && viewName !== 'calc') {
+                showCalculator();
+                return;
+            }
+
+            document.getElementById('view-calc').classList.add('hidden');
+            document.getElementById('view-home').classList.add('hidden');
+            document.getElementById('view-detail').classList.add('hidden');
+
+            // View-Player'ı hidden yapmak yerine player-offscreen sınıfını yönetiyoruz. 
+            // Böylece oyun state'i, sesi ve bölümleri asla sıfırlanmıyor!
+            const playerView = document.getElementById('view-player');
+            if (viewName === 'player') {
+                playerView.classList.remove('player-offscreen');
+                checkSaveState();
+            } else {
+                playerView.classList.add('player-offscreen');
+                exitFakeFullscreen();
+            }
+
+            if (viewName !== 'player') {
+                document.getElementById('view-' + viewName).classList.remove('hidden');
+            }
+            
+            window.scrollTo(0, 0);
+        }
+
+        function loadGameDetail(gameId) {
+            const game = GAMES_DB.find(g => g.id === gameId);
+            if (!game) return;
+            currentGameId = gameId;
+            document.getElementById('detail-title').innerText = game.title;
+            document.getElementById('detail-desc').innerText = game.description;
+            document.getElementById('play-btn').onclick = () => loadGamePlayer(gameId);
+            showView('detail');
+        }
+
+        function loadGamePlayer(gameId) {
+            const game = GAMES_DB.find(g => g.id === gameId);
+            if (!game) return;
+            
+            const frame = document.getElementById('game-frame');
+            
+            // CANLI OTURUM KORUMA: Eğer oyuncu zaten bu oyunu oynuyorsa ve iframe yüklüyse, yeniden yükleme yapma!
+            const previousUrl = frame.getAttribute('data-loaded-url');
+            if (previousUrl !== game.gameUrl) {
+                frame.src = game.gameUrl;
+                frame.setAttribute('data-loaded-url', game.gameUrl);
+            }
+            
+            localStorage.setItem('last_played_game_id', gameId);
+            lastPlayedGameId = gameId;
+
+            document.getElementById('player-title').innerText = game.title;
+            showView('player');
+        }
+
+        /* GÜVENLİ VE HATA FIRLATMAYAN TAM EKRAN MODU */
+        function enterFakeFullscreen() {
+            const container = document.getElementById('game-container');
+            
+            let fsPromise = null;
+            try {
+                if (container.requestFullscreen) {
+                    fsPromise = container.requestFullscreen();
+                } else if (container.webkitRequestFullscreen) {
+                    fsPromise = container.webkitRequestFullscreen();
+                } else if (container.mozRequestFullScreen) {
+                    fsPromise = container.mozRequestFullScreen();
+                } else if (container.msRequestFullscreen) {
+                    fsPromise = container.msRequestFullscreen();
+                }
+
+                if (fsPromise) {
+                    fsPromise.catch(err => {
+                        console.warn("Gerçek tam ekran izni reddedildi, CSS fallback moduna geçiliyor...", err);
+                        activateCssFullscreen();
+                    });
+                } else {
+                    activateCssFullscreen();
+                }
+            } catch (err) {
+                console.warn("Tam ekran başlatılırken istisna oluştu, CSS fallback moduna geçiliyor...", err);
+                activateCssFullscreen();
+            }
+        }
+
+        /* CSS TABANLI YALANCI TAM EKRAN (FALLBACK) AKTİFLEŞTİRİCİSİ */
+        function activateCssFullscreen() {
+            const container = document.getElementById('game-container');
+            const fallbackBtn = document.getElementById('fallback-exit-btn');
+            
+            container.classList.add('pseudo-fullscreen-fallback');
+            if (fallbackBtn) {
+                fallbackBtn.classList.remove('hidden');
+            }
+            document.addEventListener('keydown', handleFallbackEsc);
+        }
+
+        function handleFallbackEsc(e) {
+            if (e.key === 'Escape') {
+                exitFakeFullscreen();
+            }
+        }
+
+        /* TAM EKRAN GÜVENLİ ÇIKIŞ FONKSİYONU */
+        function exitFakeFullscreen() {
+            const container = document.getElementById('game-container');
+            const fallbackBtn = document.getElementById('fallback-exit-btn');
+            
+            container.classList.remove('pseudo-fullscreen-fallback');
+            if (fallbackBtn) {
+                fallbackBtn.classList.add('hidden');
+            }
+            document.removeEventListener('keydown', handleFallbackEsc);
+
+            try {
+                if (document.fullscreenElement || document.webkitFullscreenElement || document.mozFullScreenElement || document.msFullscreenElement) {
+                    if (document.exitFullscreen) {
+                        document.exitFullscreen().catch(err => console.warn("Güvenli exitFullscreen reddedildi:", err));
+                    } else if (document.webkitExitFullscreen) {
+                        document.webkitExitFullscreen();
+                    } else if (document.mozCancelFullScreen) {
+                        document.mozCancelFullScreen();
+                    } else if (document.msExitFullscreen) {
+                        document.msExitFullscreen();
+                    }
+                }
+            } catch (err) {
+                console.warn("HTML5 exitFullscreen işlem hatası:", err);
+            }
+        }
+
+        function renderHome() {
+            const container = document.getElementById('game-list');
+            container.innerHTML = '';
+            GAMES_DB.forEach(game => {
+                const card = document.createElement('div');
+                card.className = 'game-card p-10 flex justify-between items-center';
+                card.onclick = () => loadGameDetail(game.id);
+                
+                let pinBadge = '';
+                if (game.id === 'vice-city-sehri') {
+                    pinBadge = `<div class="mb-3 flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-red-600"></span><span class="text-[9px] font-black tracking-[0.2em] text-red-600 uppercase italic">SABİTLENDİ</span></div>`;
+                }
+
+                card.innerHTML = `
+                    <div>
+                        ${pinBadge}
+                        <h3 class="font-black text-2xl mb-1 uppercase italic tracking-tight text-white">${game.title}</h3>
+                        <p class="text-zinc-600 text-[10px] font-bold uppercase tracking-widest">${game.shortDesc}</p>
+                    </div>
+                    <div class="text-zinc-800">
+                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M9 5l7 7-7 7"></path></svg>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        window.onload = function() {
+            renderHome();
+            
+            document.addEventListener('keydown', function(event) {
+                const activeView = document.getElementById('view-calc').classList.contains('hidden') ? 'other' : 'calc';
+                
+                if (activeView === 'calc') {
+                    if (event.key >= '0' && event.key <= '9' || event.key === '.' || event.key === '/' || event.key === '*' || event.key === '-' || event.key === '+') {
+                        inputCalc(event.key);
+                    } else if (event.key === 'Enter') {
+                        evaluateCalc();
+                    } else if (event.key === 'Backspace') {
+                        backspaceCalc();
+                    } else if (event.key === 'Escape') {
+                        clearCalc();
+                    }
+                }
+            });
+        };
+    </script>
+</body>
+</html>
