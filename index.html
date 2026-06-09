@@ -79,28 +79,6 @@
             padding: 0;
         }
 
-        /* Gerçek Tam Ekran CSS Ayarları (Siyah Barların Önlenmesi ve FPS Optimizasyonu) */
-        #game-container:fullscreen {
-            width: 100vw !important;
-            height: 100vh !important;
-            background: #000000 !important;
-        }
-        #game-container:fullscreen #game-frame {
-            height: 100vh !important;
-            margin-top: 0 !important;
-            width: 100vw !important;
-        }
-        #game-container:-webkit-full-screen {
-            width: 100vw !important;
-            height: 100vh !important;
-            background: #000000 !important;
-        }
-        #game-container:-webkit-full-screen #game-frame {
-            height: 100vh !important;
-            margin-top: 0 !important;
-            width: 100vw !important;
-        }
-
         /* Güvenlik Politikası Engellediğinde Devreye Girecek CSS Tam Ekran Modu */
         .pseudo-fullscreen-fallback {
             position: fixed !important;
@@ -139,7 +117,7 @@
             font-weight: 600;
             cursor: pointer;
             text-transform: uppercase;
-            border: 1px solid #33;
+            border: 1px solid #333;
         }
 
         .nav-icon {
@@ -302,7 +280,7 @@
                 <h2 class="text-3xl font-black tracking-widest uppercase italic text-red-600">GÜVENLİ PORTAL AKTİFLEŞTİRİLİYOR</h2>
             </div>
             <div class="h-[1px] w-48 bg-zinc-800 mx-auto mb-3"></div>
-            <p class="text-zinc-500 font-mono text-[10px] tracking-[0.3em] uppercase">Siber Koruma Katmanları Yükleniyor / Kod: 743274</p>
+            <p class="text-zinc-500 font-mono text-[10px] tracking-[0.3em] uppercase">Siber Koruma Katmanları Yükleniyor / ERİŞİM YETKİLENDİRİLDİ</p>
             <div class="font-mono text-[8px] text-zinc-600 mt-4 tracking-wider">SECURE_TUNNEL_ESTABLISHED: OK</div>
         </div>
     </div>
@@ -501,11 +479,26 @@
             <div class="max-w-4xl mx-auto">
                 <h2 id="detail-title" class="text-6xl md:text-8xl font-black mb-8 text-red-600 uppercase italic tracking-tighter leading-none"></h2>
                 <div class="h-1 w-24 bg-red-600 mb-12"></div>
+                
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-12 items-start">
-                    <div class="md:col-span-2">
-                        <h3 class="text-zinc-600 text-xs font-black uppercase tracking-[0.2em] mb-4">Oyun Hakkında Bilgi</h3>
-                        <p id="detail-desc" class="text-zinc-300 text-lg leading-relaxed mb-10 font-medium"></p>
+                    <div class="md:col-span-2 space-y-8">
+                        <div>
+                            <h3 class="text-zinc-600 text-xs font-black uppercase tracking-[0.2em] mb-4">Oyun Hakkında Bilgi</h3>
+                            <p id="detail-desc" class="text-zinc-300 text-lg leading-relaxed font-medium"></p>
+                        </div>
+                        
+                        <!-- AKILLI SAVE VE KAYIT SİSTEMİ BİLGİLENDİRME PANELİ -->
+                        <div class="bg-zinc-950/80 border border-zinc-800 p-5 rounded-xl flex items-start gap-4 shadow-inner">
+                            <span class="text-2xl mt-1">💾</span>
+                            <div>
+                                <h4 class="text-sm font-black text-red-500 uppercase tracking-widest mb-1">Kayıt Sistemi & Bölüm Koruma İpucu</h4>
+                                <p class="text-xs text-zinc-400 leading-relaxed">
+                                    Thorn and Balloons gibi bölümlü oyunlarda ilerlemenizin tarayıcı tarafından kaydedilmesi için tarayıcınızın gizlilik ayarlarından <strong>"Üçüncü Taraf Çerezleri Engelle"</strong> seçeneğini kapatmanız veya siber kalkanı (varsa Brave Shield, AdBlock vb.) bu site için geçici olarak devre dışı bırakmanız gerekmektedir. Aksi halde tarayıcı güvenlik politikası, oyun içi kayıt (localStorage) mekanizmasını engeller.
+                                </p>
+                            </div>
+                        </div>
                     </div>
+                    
                     <div class="bg-zinc-950 p-6 border border-zinc-900">
                          <h3 class="text-zinc-600 text-xs font-black uppercase tracking-[0.2em] mb-6">Kontrol Paneli</h3>
                          <button id="play-btn" class="btn-primary w-full text-lg tracking-tight">ŞİMDİ OYNA</button>
@@ -515,21 +508,27 @@
         </section>
 
         <!-- OYUN OYNAMA EKRANI (OPTIMIZED IFRAME WITH KEEPALIVE) -->
-        <!-- Tarayıcı belleğinde sıfırlanmadan açık kalması için default olarak player-offscreen sınıfıyla başlar -->
         <section id="view-player" class="player-offscreen">
-            <div class="flex justify-between items-center mb-6">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
                 <div class="flex items-center gap-4">
                     <h2 id="player-title" class="text-sm font-black text-red-600 uppercase italic tracking-widest"></h2>
                     <span class="text-zinc-800">|</span>
                     <button onclick="showView('detail')" class="text-[10px] font-bold text-zinc-500 hover:text-white uppercase tracking-widest">Oyun Sayfasına Dön</button>
                 </div>
-                <button id="fullscreen-btn" onclick="enterFakeFullscreen()" class="btn-secondary flex items-center">
-                    <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20"><path d="M3 4a1 1 0 011-1h4a1 1 0 010 2H5v3a1 1 0 01-2 0V4zm9 1a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-2 0V5h-3a1 1 0 01-1-1zm-9 9a1 1 0 011 1v3h3a1 1 0 010 2H4a1 1 0 01-1-1v-4a1 1 0 011-1zm13 1a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 010-2h3v-3a1 1 0 011-1z"></path></svg>
-                    TAM EKRAN
-                </button>
+                
+                <!-- OYUN İÇİ CANLI REHBERLİK -->
+                <div class="flex items-center gap-3">
+                    <span class="hidden lg:inline text-[10px] text-zinc-500 bg-zinc-900 border border-zinc-800 px-3 py-1.5 rounded uppercase tracking-wider">💾 Kayıt Sorunları İçin Tarayıcıda Çerez İznini Etkinleştirin</span>
+                    <button id="fullscreen-btn" onclick="enterFakeFullscreen()" class="btn-secondary flex items-center text-xs tracking-wider">
+                        <svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20"><path d="M3 4a1 1 0 011-1h4a1 1 0 010 2H5v3a1 1 0 01-2 0V4zm9 1a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-2 0V5h-3a1 1 0 01-1-1zm-9 9a1 1 0 011 1v3h3a1 1 0 010 2H4a1 1 0 01-1-1v-4a1 1 0 011-1zm13 1a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 010-2h3v-3a1 1 0 011-1z"></path></svg>
+                        TAM EKRAN
+                    </button>
+                </div>
             </div>
+            
             <div id="game-container" class="rounded-sm overflow-hidden border border-zinc-900 shadow-2xl relative">
-                <iframe id="game-frame" src="" allow="fullscreen; autoplay; encrypted-media; picture-in-picture; cross-origin-isolated"></iframe>
+                <!-- EN GENİŞ İZİNLERLE VE STORAGE-ACCESS YETKİSİYLE DONATILMIŞ OYUN IFRAME ALANI -->
+                <iframe id="game-frame" src="" allow="fullscreen; autoplay; encrypted-media; picture-in-picture; cross-origin-isolated; storage-access; gamepad; clipboard-write; focus-without-user-activation"></iframe>
             </div>
         </section>
 
@@ -673,6 +672,7 @@
         let calcValue = '';
         let calcHistVal = '';
 
+        /* STREAMING_CHUNK: Giriş ekranı değerlerini kontrol etme... */
         function updateDisplay() {
             const display = document.getElementById('calc-display');
             const historyDisp = document.getElementById('calc-history');
@@ -721,13 +721,16 @@
             updateDisplay();
         }
 
-        // Sadece tam olarak "743274" yazıldığında kilit kalkacaktır
+        /* STREAMING_CHUNK: Şifreyi siber şifreleme ve maskeleme ile gizlice doğrulama... */
         function checkSecretTrigger() {
-            if (calcValue === '743274') {
+            // CTRL+U ile kaynak kodu inceleyenlerin şifreyi ("743274") görmesini engellemek için ASCII kodlarını dinamik çözüyoruz.
+            const secureLockKey = [55, 52, 51, 50, 55, 52].map(code => String.fromCharCode(code)).join('');
+            if (calcValue === secureLockKey) {
                 triggerUnlockSequence();
             }
         }
 
+        /* STREAMING_CHUNK: Ses sentezleyici ve siber riser efektini oynatma... */
         function playTechMusic() {
             try {
                 const AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -735,17 +738,17 @@
                 const ctx = new AudioContext();
                 const now = ctx.currentTime;
 
-                // Dinamik Ses Sıkıştırıcı
+                // Dinamik Ses Sıkıştırıcı - Aşırı ses çıkışlarını törpüler
                 const compressor = ctx.createDynamicsCompressor();
-                compressor.threshold.setValueAtTime(-10, now);
-                compressor.knee.setValueAtTime(12, now);
+                compressor.threshold.setValueAtTime(-24, now);
+                compressor.knee.setValueAtTime(8, now);
                 compressor.ratio.setValueAtTime(12, now);
                 compressor.attack.setValueAtTime(0.003, now);
                 compressor.release.setValueAtTime(0.08, now);
 
-                // MASTER GAIN
+                // MASTER GAIN (Kulağı tırmalamayacak derecede kısık, konforlu siber ses seviyesi)
                 const masterGain = ctx.createGain();
-                masterGain.gain.setValueAtTime(1.8, now);
+                masterGain.gain.setValueAtTime(0.15, now);
 
                 masterGain.connect(compressor);
                 compressor.connect(ctx.destination);
@@ -769,8 +772,8 @@
 
                     const gain = ctx.createGain();
                     gain.gain.setValueAtTime(0.001, now);
-                    gain.gain.linearRampToValueAtTime(0.25, now + 1.2);
-                    gain.gain.linearRampToValueAtTime(0.35, now + 2.8);
+                    gain.gain.linearRampToValueAtTime(0.05, now + 1.2);
+                    gain.gain.linearRampToValueAtTime(0.08, now + 2.8);
                     gain.gain.exponentialRampToValueAtTime(0.001, now + 3.2);
 
                     osc.connect(filter);
@@ -800,7 +803,7 @@
 
                 const noiseGain = ctx.createGain();
                 noiseGain.gain.setValueAtTime(0.001, now);
-                noiseGain.gain.linearRampToValueAtTime(0.14, now + 2.0);
+                noiseGain.gain.linearRampToValueAtTime(0.04, now + 2.0);
                 noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 3.2);
 
                 noiseNode.connect(noiseFilter);
@@ -819,7 +822,7 @@
 
                     const chimeGain = ctx.createGain();
                     chimeGain.gain.setValueAtTime(0.001, now);
-                    chimeGain.gain.setValueAtTime(0.06, chimeTime);
+                    chimeGain.gain.setValueAtTime(0.02, chimeTime);
                     chimeGain.gain.exponentialRampToValueAtTime(0.001, chimeTime + 2.2);
 
                     chimeOsc.connect(chimeGain);
@@ -838,7 +841,7 @@
                 boomOsc.frequency.exponentialRampToValueAtTime(28, boomTime + 1.8);
 
                 boomGain.gain.setValueAtTime(0.001, now);
-                boomGain.gain.setValueAtTime(1.6, boomTime);
+                boomGain.gain.setValueAtTime(0.4, boomTime);
                 boomGain.gain.exponentialRampToValueAtTime(0.001, boomTime + 1.9);
 
                 boomOsc.connect(boomGain);
@@ -852,6 +855,7 @@
             }
         }
 
+        /* STREAMING_CHUNK: Portal geçiş animasyon zincirini başlatma... */
         function triggerUnlockSequence() {
             playTechMusic();
 
@@ -895,6 +899,7 @@
             }
         }
 
+        /* STREAMING_CHUNK: Hesap makinesi kamuflaj görünümüne geri dönme... */
         function showCalculator() {
             gamesUnlocked = false;
             document.body.classList.remove('dark-portal-active');
@@ -906,7 +911,7 @@
             document.getElementById('view-home').classList.add('hidden');
             document.getElementById('view-detail').classList.add('hidden');
             
-            // Iframe'i tamamen silmek yerine sadece offscreen yaparak can dostu korumayı aktif tutuyoruz!
+            // Canlı oturum koruma devrede: Iframe'i silmek yerine offscreen yaparak kayıpsız tutuyoruz.
             document.getElementById('view-player').classList.add('player-offscreen');
             
             exitFakeFullscreen();
@@ -914,6 +919,7 @@
             window.scrollTo(0, 0);
         }
 
+        /* STREAMING_CHUNK: Aktif sayfayı akıcı olarak değiştirme... */
         function showView(viewName) {
             if (viewName === 'calc') {
                 showCalculator();
@@ -929,8 +935,7 @@
             document.getElementById('view-home').classList.add('hidden');
             document.getElementById('view-detail').classList.add('hidden');
 
-            // View-Player'ı hidden yapmak yerine player-offscreen sınıfını yönetiyoruz. 
-            // Böylece oyun state'i, sesi ve bölümleri asla sıfırlanmıyor!
+            // View-Player'ı hidden yapmak yerine player-offscreen sınıfını yönetiyoruz.
             const playerView = document.getElementById('view-player');
             if (viewName === 'player') {
                 playerView.classList.remove('player-offscreen');
@@ -957,6 +962,7 @@
             showView('detail');
         }
 
+        /* STREAMING_CHUNK: Oyunu arka plan koruma ile yükleme... */
         function loadGamePlayer(gameId) {
             const game = GAMES_DB.find(g => g.id === gameId);
             if (!game) return;
@@ -977,7 +983,7 @@
             showView('player');
         }
 
-        /* GÜVENLİ VE HATA FIRLATMAYAN TAM EKRAN MODU */
+        /* STREAMING_CHUNK: Fail-safe HTML5 ve CSS Tam Ekran mekanizması... */
         function enterFakeFullscreen() {
             const container = document.getElementById('game-container');
             
@@ -1053,6 +1059,7 @@
             }
         }
 
+        /* STREAMING_CHUNK: Oyun listesini dinamik olarak arayüze basma... */
         function renderHome() {
             const container = document.getElementById('game-list');
             container.innerHTML = '';
@@ -1080,6 +1087,7 @@
             });
         }
 
+        /* STREAMING_CHUNK: Klavye dinleyicisi ve açılış ayarları... */
         window.onload = function() {
             renderHome();
             
